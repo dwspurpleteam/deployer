@@ -1,0 +1,17 @@
+---
+- name: packages | install docker packages
+  ansible.builtin.apt:
+    name:
+      - docker.io
+      - docker-compose-v2
+      - docker-buildx
+    state: present
+    fail_on_autoremove: true
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: service | ensure docker service is enabled and running
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true

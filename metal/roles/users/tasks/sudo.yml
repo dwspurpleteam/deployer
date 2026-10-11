@@ -1,0 +1,39 @@
+---
+- name: sudo | check sudoers.d dir exists
+  ansible.builtin.file:
+    path: "{{ users_sudoers_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0750'
+
+- name: sudo | deploy per-user sudoers files
+  ansible.builtin.template:
+    src: sudoers.j2
+    dest: "{{ users_sudoers_dir }}/{{ item.name | replace('.', '_') }}"
+    owner: root
+    group: root
+    mode: '0440'
+    validate: "{{ 'visudo -cf %s' if users_sudoers_validate else omit }}"
+  loop: "{{ users_accounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.sudo | default(false)
+    - item.state | default('present') == 'present'
+    - item.name not in users_removed_users
+
+- name: sudo | remove obsolete sudoers files
+  ansible.builtin.file:
+    path: "{{ users_sudoers_dir }}/{{ item.name | replace('.', '_') }}"
+    state: absent
+  loop: "{{ users_accounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: not (item.sudo | default(false)) or item.state | default('present') == 'absent' or item.name in users_removed_users
+
+- name: sudo | remove blacklisted users' sudoers files
+  ansible.builtin.file:
+    path: "{{ users_sudoers_dir }}/{{ item | replace('.', '_') }}"
+    state: absent
+  loop: "{{ users_removed_users }}"

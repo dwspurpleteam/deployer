@@ -1,0 +1,13 @@
+---
+users_accounts: []
+users_groups: []
+users_removed_users: []
+
+users_default_shell: /bin/bash
+users_create_home: true
+users_home_base: /home
+
+users_ssh_key_exclusive: true
+
+users_sudoers_dir: /etc/sudoers.d
+users_sudoers_validate: true

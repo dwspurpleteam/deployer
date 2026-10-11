@@ -1,0 +1,41 @@
+---
+- name: users | create users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    comment: "{{ item.fullname | default(item.name) }}"
+    shell: "{{ item.shell | default(users_default_shell) }}"
+    groups: "{{ item.groups | default([]) }}"
+    append: true
+    create_home: "{{ users_create_home }}"
+    home: "{{ item.home | default(users_home_base + '/' + item.name) }}"
+    uid: "{{ item.uid | default(omit) }}"
+    state: "{{ item.state | default('present') }}"
+    password: "{{ item.password_hash | default('*') }}"
+    password_lock: false
+  loop: "{{ users_accounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.name not in users_removed_users
+  no_log: true
+
+- name: users | set strict permissions on home directories
+  ansible.builtin.file:
+    path: "{{ item.home | default(users_home_base + '/' + item.name) }}"
+    state: directory
+    owner: "{{ item.name }}"
+    group: "{{ item.name }}"
+    mode: '0700'
+  loop: "{{ users_accounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.state | default('present') == 'present'
+    - item.name not in users_removed_users
+
+- name: users | remove blacklisted users
+  ansible.builtin.user:
+    name: "{{ item }}"
+    state: absent
+    remove: true
+  loop: "{{ users_removed_users }}"
+  when: item != ansible_user

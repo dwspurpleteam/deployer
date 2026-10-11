@@ -1,0 +1,5 @@
+all:
+  children:
+    metal:
+      hosts:
+        prod-msk-1:

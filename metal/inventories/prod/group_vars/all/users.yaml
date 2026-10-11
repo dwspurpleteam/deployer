@@ -1,0 +1,21 @@
+users_accounts:
+  - name: autobot
+    fullname: Autobot
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIbzQ1wLEuK7ait29SeogZdh2MvVPC1iQzEfbAmlAYDZ dwspurpleteam-autobot
+    sudo: true
+    sudo_nopasswd: true
+
+  - name: daniil.mironenko
+    fullname: Daniil Mironenko
+    groups:
+      - admin
+      - docker
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINekDccrjYhg+uSVMYgvZgJMq3kZN6opd6uNtctURCya dan.mironenko@gmail.com
+    sudo: true
+    sudo_nopasswd: true
+
+users_groups:
+  - name: admin
+  - name: docker

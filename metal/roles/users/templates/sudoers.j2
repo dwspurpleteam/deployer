@@ -1,0 +1,5 @@
+{% if item.sudo_nopasswd | default(false) %}
+{{ item.name }} ALL=(ALL) NOPASSWD: {{ item.sudo_commands | default('ALL') }}
+{% else %}
+{{ item.name }} ALL=(ALL) {{ item.sudo_commands | default('ALL') }}
+{% endif %}

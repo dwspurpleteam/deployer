@@ -1,0 +1,12 @@
+---
+- name: main | setup groups
+  ansible.builtin.include_tasks: groups.yml
+
+- name: main | setup users
+  ansible.builtin.include_tasks: users.yml
+
+- name: main | setup ssh keys
+  ansible.builtin.include_tasks: ssh_keys.yml
+
+- name: main | setup sudo config
+  ansible.builtin.include_tasks: sudo.yml

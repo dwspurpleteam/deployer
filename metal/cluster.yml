@@ -1,0 +1,10 @@
+---
+- name: setup server
+  hosts: metal
+  become: true
+  roles:
+    - role: users
+      tags: users
+
+    - role: docker
+      tags: docker

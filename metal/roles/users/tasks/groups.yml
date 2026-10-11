@@ -1,0 +1,8 @@
+---
+- name: groups | create defined groups
+  ansible.builtin.group:
+    name: "{{ item.name }}"
+    gid: "{{ item.gid | default(omit) }}"
+    system: "{{ item.system | default(false) }}"
+    state: present
+  loop: "{{ users_groups }}"

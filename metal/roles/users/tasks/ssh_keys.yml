@@ -1,0 +1,15 @@
+---
+- name: ssh_keys | deploy all keys together
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.ssh_keys | join('\n') }}"
+    exclusive: "{{ users_ssh_key_exclusive }}"
+    manage_dir: true
+    state: present
+  loop: "{{ users_accounts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when:
+    - item.state | default('present') == 'present'
+    - item.name not in users_removed_users
+    - item.ssh_keys is defined
