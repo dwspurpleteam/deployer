@@ -17,12 +17,12 @@ flowchart LR
   browser <-->|WebRTC / TURN| openvidu
 
   subgraph calls_stage["Calls (stage)"]
-    stage[NGINX] --> stage_meet[Meet]
+    stage[NGINX] --> stage_meet[OpenVidu Meet]
   end
 
   subgraph calls_prod["Calls (prod)"]
-    proxy["NGINX"] --> meet[Meet]
-    proxy --> openvidu[OpenVidu]
+    proxy["NGINX"] --> meet[OpenVidu Meet]
+    proxy --> openvidu[OpenVidu LiveKit]
     meet --> openvidu
   end
 
