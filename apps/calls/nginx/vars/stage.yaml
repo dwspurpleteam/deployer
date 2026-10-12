@@ -1,4 +1,7 @@
 app:
-  upstreams: null
-  routes: null
-  redirect: null
+  networks:
+    calls_prod:
+      namespace: calls
+      environment: prod
+  upstreams:
+    meet: meet-stage:6080

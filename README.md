@@ -17,7 +17,7 @@ flowchart LR
   browser <-->|WebRTC / TURN| openvidu
 
   subgraph calls_stage["Calls (stage)"]
-    stage[NGINX]
+    stage[NGINX] --> stage_meet[Meet]
   end
 
   subgraph calls_prod["Calls (prod)"]
@@ -35,5 +35,10 @@ flowchart LR
   meet --> mongodb
   meet --> redis
   meet --> minio
+  stage --> openvidu
+  stage_meet --> openvidu
+  stage_meet --> mongodb
+  stage_meet --> redis
+  stage_meet --> minio
   openvidu --> redis
 ```

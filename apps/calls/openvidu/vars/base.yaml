@@ -1,3 +1,7 @@
+build:
+  repository: https://github.com/dwspurpleteam/openvidu-livekit.git
+  tag: 3.9.0
+
 app:
   networks:
     storage:
@@ -36,7 +40,6 @@ app:
 compose:
   services:
     openvidu:
-      image: openvidu/openvidu-server:3.9.0
       command: --config /etc/livekit.yaml
       networks:
         default:

@@ -1,0 +1,18 @@
+FROM --platform=$BUILDPLATFORM golang:1.26.7-alpine3.24 AS builder
+
+RUN apk add --no-cache git
+WORKDIR /src
+ENV GOTOOLCHAIN=local
+
+RUN git clone {{ quote .Vars.build.repository }} . \
+    && git checkout {{ quote .Vars.build.tag }}
+
+ARG TARGETARCH
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -o /out/livekit-server ./cmd/server
+
+FROM alpine:3.24.1
+
+RUN apk add --no-cache ca-certificates tzdata
+COPY --from=builder /out/livekit-server /livekit-server
+
+ENTRYPOINT ["/livekit-server"]

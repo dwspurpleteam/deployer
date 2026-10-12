@@ -1,0 +1,40 @@
+FROM --platform=$BUILDPLATFORM node:24.15.0 AS builder
+
+RUN corepack enable
+WORKDIR /app
+
+RUN git clone {{ quote .Vars.build.repository }} . \
+    && git checkout {{ quote .Vars.build.tag }}
+
+RUN pnpm install --frozen-lockfile \
+    && ./meet.sh build --skip-install --base-href={{ quote (printf "%s/" .Vars.app.environment.MEET_BASE_PATH) }}
+
+FROM node:24.15.0-alpine AS prod-deps
+
+RUN corepack enable
+WORKDIR /app
+
+COPY --from=builder /app/package.json /app/pnpm-workspace.yaml /app/pnpm-lock.yaml ./
+COPY --from=builder /app/meet-ce/typings/package.json ./meet-ce/typings/
+COPY --from=builder /app/meet-ce/backend/package.json ./meet-ce/backend/
+
+RUN pnpm --config.inject-workspace-packages=true --filter @openvidu-meet/backend deploy --prod /deploy
+
+FROM node:24.15.0-alpine
+
+RUN apk add --no-cache tzdata
+WORKDIR /opt/openvidu-meet
+
+COPY --from=prod-deps --chown=node:node /deploy/node_modules ./node_modules
+COPY --from=builder --chown=node:node /app/meet-ce/typings/dist ./node_modules/@openvidu-meet/typings/dist
+COPY --from=builder --chown=node:node /app/meet-ce/backend/dist ./meet-ce/backend/dist
+COPY --from=builder --chown=node:node /app/meet-ce/backend/public ./meet-ce/backend/public
+COPY --from=builder --chown=node:node /app/meet-ce/backend/package.json ./meet-ce/backend/package.json
+COPY --from=builder --chown=node:node /app/meet-ce/backend/info.json ./meet-ce/backend/info.json
+COPY --from=builder --chmod=755 /app/meet-ce/docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+USER node
+ENV NODE_ENV=production
+
+EXPOSE 6080
+CMD ["/usr/local/bin/entrypoint.sh"]
