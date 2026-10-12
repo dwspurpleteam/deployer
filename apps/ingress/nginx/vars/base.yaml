@@ -1,4 +1,5 @@
 app:
+  stage_token: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXMkVidVFNU0lESHI5UkVJaWdYTTdGekkzZG5RdUtrTnN3ekwzV0NTM2tFCndHQlZiKzRaMndoR0tvUHppKzlxbXVqdjk4UkVUQWFSNkgxUVAxT1dBRzgKLS0tIGg0YW5hM2dVaHVxY1AxWU13YjFsMW95S0RkY0FSd045Z0dHZjN6UWdSNncKRDt5ggdbHGn2L5fOmrDlrYZtgzJu7oBWAF5Ajv45YL/4OK/AQr0J8EuyfHVJSQaTwONSSTAL+XBcHx+ZdAE7m5azSOkRxq2+1ga3krcIKpw=]
   backend_alias: nginx
   backend_port: 8080
   domain: calls.vareonix.cc
@@ -38,6 +39,3 @@ compose:
 
   volumes:
     letsencrypt: {}
-
-secrets:
-  stage_token: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXMkVidVFNU0lESHI5UkVJaWdYTTdGekkzZG5RdUtrTnN3ekwzV0NTM2tFCndHQlZiKzRaMndoR0tvUHppKzlxbXVqdjk4UkVUQWFSNkgxUVAxT1dBRzgKLS0tIGg0YW5hM2dVaHVxY1AxWU13YjFsMW95S0RkY0FSd045Z0dHZjN6UWdSNncKRDt5ggdbHGn2L5fOmrDlrYZtgzJu7oBWAF5Ajv45YL/4OK/AQr0J8EuyfHVJSQaTwONSSTAL+XBcHx+ZdAE7m5azSOkRxq2+1ga3krcIKpw=]

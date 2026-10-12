@@ -7,10 +7,10 @@ map $http_upgrade $connection_upgrade {
 
 map $cookie_{{ .Vars.app.cookie }} $environment_backend {
   default env_prod;
-  "~^{{ .Secrets.stage_token }}:" "";
+  "~^{{ .Vars.app.stage_token }}:" "";
 
 {{ range .Environments }}{{ if ne . "prod" }}
-  "{{ $.Secrets.stage_token }}:{{ . }}" env_{{ . }};
+  "{{ $.Vars.app.stage_token }}:{{ . }}" env_{{ . }};
 {{ end }}{{ end }}
 }
 

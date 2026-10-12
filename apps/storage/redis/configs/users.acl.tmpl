@@ -1,3 +1,3 @@
-{{- range $name, $rules := .Vars.app.users }}
-user {{ $name }} on >{{ get $.Secrets.users $name }} {{ $rules }}
+{{- range $name, $user := .Vars.app.users }}
+user {{ $name }} on >{{ $user.password }} {{ $user.rules }}
 {{- end }}
