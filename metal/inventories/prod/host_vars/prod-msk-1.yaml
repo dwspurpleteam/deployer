@@ -19,3 +19,12 @@ firewall_rules:
     proto: udp
   - port: 40000:40050
     proto: udp
+
+  - port: '8881'
+    proto: tcp
+  - port: '3479'
+    proto: udp
+  - port: 8900:8999
+    proto: udp
+  - port: 40100:40150
+    proto: udp

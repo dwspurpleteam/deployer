@@ -1,1 +1,5 @@
-{{ toYAML (merge .Vars.app.config (dict "keys" (dict .Secrets.api_key .Secrets.api_secret) "redis" (dict "password" .Secrets.redis_password) "webhook" (dict "api_key" .Secrets.api_key))) }}
+{{- $config := merge .Vars.app.config (dict "keys" (dict .Secrets.api_key .Secrets.api_secret) "webhook" (dict "api_key" .Secrets.api_key)) -}}
+{{- if get .Vars.app.config "redis" -}}
+{{- $config = merge $config (dict "redis" (dict "password" .Secrets.redis_password)) -}}
+{{- end -}}
+{{ toYAML $config }}

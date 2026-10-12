@@ -15,9 +15,12 @@ flowchart LR
   ingress -->|default| proxy
   ingress -->|stage cookie| stage
   browser <-->|WebRTC / TURN| openvidu
+  browser <-->|WebRTC / TURN| stage_openvidu
 
   subgraph calls_stage["Calls (stage)"]
     stage[NGINX] --> stage_meet[OpenVidu Meet]
+    stage --> stage_openvidu[OpenVidu LiveKit]
+    stage_meet --> stage_openvidu
   end
 
   subgraph calls_prod["Calls (prod)"]
@@ -35,8 +38,6 @@ flowchart LR
   meet --> mongodb
   meet --> redis
   meet --> minio
-  stage --> openvidu
-  stage_meet --> openvidu
   stage_meet --> mongodb
   stage_meet --> redis
   stage_meet --> minio
