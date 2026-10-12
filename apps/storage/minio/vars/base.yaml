@@ -1,36 +1,36 @@
 app:
-  environment:
+  env:
     MINIO_ROOT_USER: minioadmin
     MINIO_ROOT_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBvMnNpdUlpL0IyTnJpbWl6ZlBmSXU2a1ZIV051eG1Kb2NrOG8wRGUxVmpJCi83aTlBNXMwNlNmVEFnN1JycHBGKzFFYVp5RFZwQmhWV1lDRk8wTE93QUkKLS0tIDJnaHd2Q25jcFZ0YkU5WUdQZkh2b2lXY3ZjamRqdEZSYlZRSy91dy91amMKCjCu2g+C8E61b0pe/Eg73N2gDRHW2GODoz93uAxZRty2w7xH80ss17Jt28WTC6gll4PVytgJybBySRiIBNxCswfO6w/nAjYTFOlm9nx7h7E=]
     MINIO_DEFAULT_BUCKETS: openvidu-appdata
     MINIO_BROWSER: 'off'
     MINIO_UPDATE: 'off'
 
-  endpoint: http://minio:9000
+endpoint: http://minio:9000
 
-  users:
-  - name: meet
-    password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZHJKYjErUDkxMm0xOEtHNUJMMFpIVklrZU83TUZrdTFaY2RqTHFRNno0ClliQVZXK2hYTDI1WHZPbjdzWDBjWFhUTFBIZk5hTnJDbGFUQXdrMVNPdm8KLS0tIEV4OG1FRWNESXFaaVVZUWM2QVRSSjNhUTlLWHVRNmF4MFVSMHBMVDE2KzAKR2iTaDzYbhvrFGnMlyS0blk8X9jAnqxp8hqOO5yFZYsljQp8HeKVfE08cdFr13WvXlD6MnjV9s+uAzELUwf5ubUTWwLwvHECIioeq5EdBP8=]
-    policy: meet
+users:
+- name: meet
+  password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZHJKYjErUDkxMm0xOEtHNUJMMFpIVklrZU83TUZrdTFaY2RqTHFRNno0ClliQVZXK2hYTDI1WHZPbjdzWDBjWFhUTFBIZk5hTnJDbGFUQXdrMVNPdm8KLS0tIEV4OG1FRWNESXFaaVVZUWM2QVRSSjNhUTlLWHVRNmF4MFVSMHBMVDE2KzAKR2iTaDzYbhvrFGnMlyS0blk8X9jAnqxp8hqOO5yFZYsljQp8HeKVfE08cdFr13WvXlD6MnjV9s+uAzELUwf5ubUTWwLwvHECIioeq5EdBP8=]
+  policy: meet
 
-  policy:
-    Version: '2012-10-17'
-    Statement:
-    - Effect: Allow
-      Action:
-      - s3:ListBucket
-      - s3:GetBucketLocation
-      Resource:
-      - arn:aws:s3:::openvidu-appdata
-    - Effect: Allow
-      Action:
-      - s3:GetObject
-      - s3:PutObject
-      - s3:DeleteObject
-      - s3:AbortMultipartUpload
-      - s3:ListMultipartUploadParts
-      Resource:
-      - arn:aws:s3:::openvidu-appdata/*
+policy:
+  Version: '2012-10-17'
+  Statement:
+  - Effect: Allow
+    Action:
+    - s3:ListBucket
+    - s3:GetBucketLocation
+    Resource:
+    - arn:aws:s3:::openvidu-appdata
+  - Effect: Allow
+    Action:
+    - s3:GetObject
+    - s3:PutObject
+    - s3:DeleteObject
+    - s3:AbortMultipartUpload
+    - s3:ListMultipartUploadParts
+    Resource:
+    - arn:aws:s3:::openvidu-appdata/*
 
 build:
   repository: https://github.com/minio/mc.git

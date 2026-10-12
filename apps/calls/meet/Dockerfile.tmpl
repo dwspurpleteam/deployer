@@ -7,7 +7,7 @@ RUN git clone {{ quote .Vars.build.repository }} . \
     && git checkout {{ quote .Vars.build.tag }}
 
 RUN pnpm install --frozen-lockfile \
-    && ./meet.sh build --skip-install --base-href={{ quote (printf "%s/" .Vars.app.environment.MEET_BASE_PATH) }}
+    && ./meet.sh build --skip-install --base-href={{ quote (printf "%s/" .Vars.app.env.MEET_BASE_PATH) }}
 
 FROM node:24.15.0-alpine AS prod-deps
 
