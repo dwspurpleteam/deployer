@@ -1,0 +1,8 @@
+---
+- name: apply sysfs settings
+  ansible.builtin.command:
+    argv:
+      - systemd-tmpfiles
+      - --create
+      - /etc/tmpfiles.d/databases.conf
+  changed_when: true

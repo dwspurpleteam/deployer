@@ -1,0 +1,41 @@
+app:
+  route_namespace: calls
+  backend_alias: nginx
+  backend_port: 8080
+  domain: calls.vareonix.cc
+  http_port: 80
+  https_port: 443
+  certificate: site
+  cookie: composer_stage
+  resolver: 127.0.0.11
+  resolver_valid: 5s
+  max_body_size: 10m
+  proxy_timeout: 3600s
+  proxy_max_temp_file_size: 0
+
+compose:
+  services:
+    nginx:
+      image: jonasal/nginx-certbot:6.2.0-alpine
+      environment:
+        CERTBOT_EMAIL: dan.mironenko@gmail.com
+        RENEWAL_INTERVAL: 12h
+      ports:
+      - 80:80
+      - 443:443
+      volumes:
+      - ./configs/nginx.conf:/etc/nginx/user_conf.d/nginx.conf:ro
+      - ./configs/redirector.conf:/etc/nginx/conf.d/redirector.conf:ro
+      - letsencrypt:/etc/letsencrypt
+      mem_limit: 256m
+      healthcheck:
+        test: wget --no-check-certificate -qO- https://127.0.0.1/healthz
+        interval: 10s
+        timeout: 5s
+        retries: 30
+
+  volumes:
+    letsencrypt: {}
+
+secrets:
+  stage_token: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXMkVidVFNU0lESHI5UkVJaWdYTTdGekkzZG5RdUtrTnN3ekwzV0NTM2tFCndHQlZiKzRaMndoR0tvUHppKzlxbXVqdjk4UkVUQWFSNkgxUVAxT1dBRzgKLS0tIGg0YW5hM2dVaHVxY1AxWU13YjFsMW95S0RkY0FSd045Z0dHZjN6UWdSNncKRDt5ggdbHGn2L5fOmrDlrYZtgzJu7oBWAF5Ajv45YL/4OK/AQr0J8EuyfHVJSQaTwONSSTAL+XBcHx+ZdAE7m5azSOkRxq2+1ga3krcIKpw=]

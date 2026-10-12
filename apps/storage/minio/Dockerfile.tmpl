@@ -1,0 +1,9 @@
+FROM golang:1.26-alpine AS builder
+RUN apk add --no-cache git
+WORKDIR /src
+RUN git clone --depth 1 --branch {{ quote .Vars.build.tag }} {{ quote .Vars.build.repository }} . \
+    && CGO_ENABLED=0 go build -o /out/mc .
+
+FROM alpine:3.23
+RUN apk add --no-cache ca-certificates
+COPY --from=builder /out/mc /usr/local/bin/mc

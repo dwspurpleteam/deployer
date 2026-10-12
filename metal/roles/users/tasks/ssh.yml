@@ -1,0 +1,14 @@
+---
+- name: ssh | configure authentication before hosting defaults
+  ansible.builtin.template:
+    src: sshd.conf.j2
+    dest: /etc/ssh/sshd_config.d/00-users.conf
+    owner: root
+    group: root
+    mode: '0644'
+    validate: /usr/sbin/sshd -t -f %s
+  notify: reload ssh
+
+- name: ssh | validate complete server configuration
+  ansible.builtin.command: /usr/sbin/sshd -t
+  changed_when: false

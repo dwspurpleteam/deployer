@@ -1,0 +1,3 @@
+{% for path, value in kernel_sysfs.items() %}
+w {{ path }} - - - - {{ value }}
+{% endfor %}

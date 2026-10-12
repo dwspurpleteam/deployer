@@ -1,0 +1,7 @@
+---
+- name: allow configured host ports
+  community.general.ufw:
+    rule: allow
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  loop: "{{ firewall_rules }}"

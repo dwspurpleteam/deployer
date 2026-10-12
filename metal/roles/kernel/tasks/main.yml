@@ -1,0 +1,17 @@
+---
+- name: configure kernel parameters
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_file: /etc/sysctl.d/90-databases.conf
+    sysctl_set: true
+  loop: "{{ kernel_sysctl | dict2items }}"
+
+- name: configure persistent sysfs settings
+  ansible.builtin.template:
+    src: kernel.conf.j2
+    dest: /etc/tmpfiles.d/databases.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: apply sysfs settings

@@ -1,0 +1,70 @@
+app:
+  environment:
+    MONGODB_ROOT_USER: mongoadmin
+    MONGODB_ADVERTISED_HOSTNAME: mongo
+    MONGODB_REPLICA_SET_MODE: primary
+    MONGODB_REPLICA_SET_NAME: rs0
+    MONGODB_EXTRA_FLAGS: --wiredTigerCacheSizeGB=0.25
+  users:
+  - name: meet
+    database: openvidu-meet
+    roles:
+    - role: readWrite
+      db: openvidu-meet
+
+compose:
+  services:
+    permissions:
+      image: busybox:1.38.0
+      restart: 'no'
+      user: 0:0
+      command: chown 1001:1001 /data
+      volumes:
+      - data:/data
+
+    mongodb:
+      image: openvidu/mongodb:8.0.29-r1
+      env_file:
+      - ./configs/service.env
+      volumes:
+      - data:/bitnami/mongodb
+      networks:
+        default:
+          aliases:
+          - mongo
+      mem_limit: 768m
+      ulimits:
+        nofile:
+          soft: 64000
+          hard: 64000
+      healthcheck:
+        test: /opt/bitnami/mongodb/bin/mongosh --quiet --eval 'db.getSiblingDB("admin").auth(process.env.MONGODB_ROOT_USER, process.env.MONGODB_ROOT_PASSWORD); if (!db.hello().isWritablePrimary) quit(1)'
+        interval: 10s
+        timeout: 5s
+        retries: 12
+      depends_on:
+        permissions:
+          condition: service_completed_successfully
+
+    users:
+      image: openvidu/mongodb:8.0.29-r1
+      restart: 'no'
+      entrypoint: /opt/bitnami/mongodb/bin/mongosh
+      command: --host mongo --quiet --file /config/users.js
+      env_file:
+      - ./configs/service.env
+      volumes:
+      - ./configs/users.js:/config/users.js:ro
+      depends_on:
+        mongodb:
+          condition: service_healthy
+
+  volumes:
+    data: {}
+
+secrets:
+  environment:
+    MONGODB_ROOT_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxOUJiR3dOS2J2ZDJHcm9DbjdDN0ZzMnV5cytIeVBZbytmUmI3di9XMFUwCnFlbnVTYThHMm1lZkZULysxOFJhWDFDVEFIQzZGQitnSVhUOXpxNW9hZkUKLS0tIFdkbGlObEN6ZlY0d0dYUmd2S01OeEorbFVzY1EyL1h5cVZYYWZuVWg4a1kKxEdpbLyYOjVuvjTFaGXApRKLNjUMsRLK7SUSfKmbdTZpQumNpdvcMNiaZ26Cz8OkEe1bBk51jk8ZTEE+dGjba6x9EFs1R9B57GjbjjLdsO4=]
+    MONGODB_REPLICA_SET_KEY: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBrbi9LYVpXQ0xHR2c2bk13SnFmOWFkMlZxSzI3KytpQkJSZ3hYWW1VOUVrClVGYVJZcE5CZk1WVEljenptZjU0dzA1RU4xWlJVUkc3cS9lcFphRkE0V3cKLS0tIFlqblY2OWZtN0gxcCtJbHpDRVVidmljWk9iR3RkOFYxUFNkOUJPdlpDTmcKZUYXg2NoXjrBi5aMznL5F3IEyRUMLP1jJ0QC6/OZakKTeFusC+oChXiO6ggiR9+B8epVrbHpYQTuBjdnUQ3XVYBjSSuIiOnfjtoe6uDOVO4=]
+  users:
+    meet: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqLys1Mm40aHJoV1licUh2U3YrOWlXdnEwYS8yMGVVZHo1cXR2T2F5aFJFClJncVZwTDJoWjUyTmR6MTI2NzgvemhwTi80VWFnRlRzK1dhVlZkMDNxUXcKLS0tIDkweWxQRmhyR0RFdTJmNWlSS3ZDK2UvYTdpaS96L1ZRVGhocVpHSkp5WHMKSQbecALWok+hNOEboyR/6E11Vwbb0ru0u/DrBoaOx/Wrv57N5RKBUAT/f0L9jvnEMd64ug75Upit5MIlZ0uswlrfcRbLUC8VfGNxeZCFULc=]

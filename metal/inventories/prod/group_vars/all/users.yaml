@@ -1,6 +1,13 @@
 users_accounts:
+  - name: root
+    uid: 0
+    home: /root
+
   - name: autobot
     fullname: Autobot
+    groups:
+      - admin
+      - docker
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIbzQ1wLEuK7ait29SeogZdh2MvVPC1iQzEfbAmlAYDZ dwspurpleteam-autobot
     sudo: true
@@ -19,3 +26,9 @@ users_accounts:
 users_groups:
   - name: admin
   - name: docker
+
+users_ssh_settings:
+  PubkeyAuthentication: 'yes'
+  PasswordAuthentication: 'no'
+  KbdInteractiveAuthentication: 'no'
+  PermitRootLogin: prohibit-password

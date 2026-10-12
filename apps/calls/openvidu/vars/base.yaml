@@ -1,0 +1,64 @@
+app:
+  networks:
+    storage:
+      namespace: storage
+      environment: prod
+  config:
+    port: 7880
+    rtc:
+      node_ip: 153.76.163.163
+      use_external_ip: false
+      interfaces:
+        includes:
+        - media
+      tcp_port: 7881
+      port_range_start: 7900
+      port_range_end: 7999
+    redis:
+      address: redis:6379
+      username: openvidu
+    turn:
+      enabled: true
+      relay_preferred_interface: media
+      udp_port: 3478
+      relay_range_start: 40000
+      relay_range_end: 40050
+    webhook:
+      urls:
+      - http://meet:6080/livekit/webhook
+    openvidu:
+      analytics:
+        enabled: false
+    logging:
+      level: info
+      pion_level: warn
+
+compose:
+  services:
+    openvidu:
+      image: openvidu/openvidu-server:3.9.0
+      command: --config /etc/livekit.yaml
+      networks:
+        default:
+          interface_name: media
+          gw_priority: 1
+        storage:
+          interface_name: storage
+      ports:
+      - 7881:7881/tcp
+      - 7900-7999:7900-7999/udp
+      - 3478:3478/udp
+      - 40000-40050:40000-40050/udp
+      volumes:
+      - ./configs/livekit.yaml:/etc/livekit.yaml:ro
+      mem_limit: 1g
+      healthcheck:
+        test: wget -q --spider http://localhost:7880/
+        interval: 5s
+        timeout: 3s
+        retries: 12
+
+secrets:
+  api_key: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBqQjV5Z0gzKy9VOXlETTdnZFQ5clU2b2RvcXc1L0VPRFZYbTZWaWxBaXpJCm91ZHZmdncwUklNYTQrVlRZNDlQUTRaNUsxQldNSlpuQUczeHNRUldaM1UKLS0tIEhKQ04yT3hpamd3aDM5NjVaelAyTVNkV05WVTJUMnJTZkd3UHBZejZ0bzQKJ809v8K5lDf4jHnuFHxqKvHTJN2CfFoKgIxqjlTuxp3Cj8p4CRc=]
+  api_secret: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArL0tJZThoYVdnUk15UzlRMFo4d0psQW93dzZLSTM0eC8wcHlhL2tpTkU0Cjl4azNyYjNFNmlCMWt4bi9meCtnQnkwM25ZUjVvZmxFWFNJTnJocGxFWE0KLS0tIG9iSm5HZm8wN3JqMFBTMXFOUy9DZS9ZcUV4dWpxZFU0QzJnbHQrV3NOOWMKzQQBuw4wjqgrR5H4MyVlf9iy56iA4Qze8BiY3xgEqepq36Sbqngz/CQBnsQxx4k9sPurxXcxrQL29qjMUlRdB297lryVaD9i44KwUVc+gCY=]
+  redis_password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKZ0RTV0d3V2hnM2tYUks2WlJ6eWwrUS95UzM2b2pzcXgzN3AvcDZHcFdvClJwSkpVOGJ0TnBPOFlYT3I3cHIxVEdCdjJwUTVzQTlKVFFWcVhpM1JqVTgKLS0tIDNFUTFFT3VkK1dUdEV6RStHTk9qdlA2WFIwRWpLYUZUZ0RoL0I5UEViYTAK9EE5/Aphfiuhh4SNSzg9pv82gH2MS2xynXwixa+cLAQ2xTGFeGogR++8TvwVoPcpRK3K+Z7wR8ApMWI/SM6FKl5fPhGbgovNpqIlwESv6no=]

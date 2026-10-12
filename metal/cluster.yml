@@ -2,7 +2,26 @@
 - name: setup server
   hosts: metal
   become: true
+  pre_tasks:
+    - name: set hostname
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+      tags: hostname
+
+    - name: update hostname in hosts file
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: '^{{ ansible_host | regex_escape }}\s'
+        line: "{{ ansible_host }} {{ inventory_hostname }}"
+      tags: hostname
+
   roles:
+    - role: kernel
+      tags: kernel
+
+    - role: firewall
+      tags: firewall
+
     - role: users
       tags: users
 

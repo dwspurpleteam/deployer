@@ -10,3 +10,7 @@
 
 - name: main | setup sudo config
   ansible.builtin.include_tasks: sudo.yml
+
+- name: main | setup SSH authentication
+  ansible.builtin.include_tasks: ssh.yml
+  when: users_ssh_settings | length > 0

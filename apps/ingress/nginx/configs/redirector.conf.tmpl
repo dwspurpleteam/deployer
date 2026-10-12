@@ -1,0 +1,12 @@
+server {
+  listen {{ .Vars.app.http_port }} default_server;
+  server_name {{ .Vars.app.domain }};
+
+  location /.well-known/acme-challenge/ {
+    root /var/www/letsencrypt;
+  }
+
+  location / {
+    return 308 https://{{ .Vars.app.domain }}$request_uri;
+  }
+}

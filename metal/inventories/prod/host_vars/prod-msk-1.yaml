@@ -1,1 +1,21 @@
 ansible_host: 153.76.163.163
+
+kernel_sysctl:
+  vm.overcommit_memory: 1
+  vm.swappiness: 1
+
+# mongodb 8 uses thp, redis disables it for its own process at startup.
+kernel_sysfs:
+  /sys/kernel/mm/transparent_hugepage/enabled: always
+  /sys/kernel/mm/transparent_hugepage/defrag: defer+madvise
+  /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none: 0
+
+firewall_rules:
+  - port: '7881'
+    proto: tcp
+  - port: '3478'
+    proto: udp
+  - port: 7900:7999
+    proto: udp
+  - port: 40000:40050
+    proto: udp

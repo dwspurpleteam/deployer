@@ -10,8 +10,7 @@
     home: "{{ item.home | default(users_home_base + '/' + item.name) }}"
     uid: "{{ item.uid | default(omit) }}"
     state: "{{ item.state | default('present') }}"
-    password: "{{ item.password_hash | default('*') }}"
-    password_lock: false
+    password: "{{ item.password_hash | default(omit) }}"
   loop: "{{ users_accounts }}"
   loop_control:
     label: "{{ item.name }}"

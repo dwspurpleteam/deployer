@@ -8,6 +8,7 @@ users_create_home: true
 users_home_base: /home
 
 users_ssh_key_exclusive: true
+users_ssh_settings: {}
 
 users_sudoers_dir: /etc/sudoers.d
 users_sudoers_validate: true
