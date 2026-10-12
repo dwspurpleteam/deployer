@@ -25,6 +25,7 @@ upstream env_{{ . }} {
 
 server {
   listen {{ .Vars.app.https_port }} ssl;
+  http2 on;
   server_name {{ .Vars.app.domain }};
 
   ssl_certificate /etc/letsencrypt/live/{{ .Vars.app.certificate }}/fullchain.pem;
