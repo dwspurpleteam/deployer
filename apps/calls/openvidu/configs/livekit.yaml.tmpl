@@ -1,1 +1,1 @@
-{{ toYAML (merge .Vars.app.config (dict "keys" (dict .Vars.app.api_key .Vars.app.api_secret) "webhook" (dict "api_key" .Vars.app.api_key))) }}
+{{ .Vars.app | toYAML }}
