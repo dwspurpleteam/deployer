@@ -3,20 +3,6 @@ app:
     LIVEKIT_URL_PRIVATE: ws://openvidu-stage:7880
     MEET_REDIS_DB: '1'
 
-compose:
-  services:
-    meet: null
-
-    meet-stage:
-      env_file:
-      - ./configs/service.env
-      mem_limit: 768m
-      healthcheck:
-        test: 'node -e "fetch(''http://localhost:6080/meet/'').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"'
-        interval: 10s
-        timeout: 5s
-        retries: 12
-
 secrets:
   environment:
     LIVEKIT_API_KEY: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBjV2tUY0txTUllQjI4ejdnM0pFK1NZY0FUczlpbGdqaXZiZE9vQlpsLzFFCk5udDZPTDhyU0RHbjZ4OG9rS0RqM0JGVTlWekpCNkVKOWZhSUY5UmN2eU0KLS0tIFM5Y3FxYjZNYTlONld4YklxaXRSeXRpY1ZQR2NwLzJKOTRHN1ovQ041dGsKUZcAuA4EH4IxbHHcOhBIf71IyPe3V0X8ZfcdbxjNUIsDCl+F3ycNRcS33+rChlNf3+nnc7lG+MA17sy6Mg==]

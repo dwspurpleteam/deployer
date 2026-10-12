@@ -3,10 +3,6 @@ build:
   tag: v3.9.0
 
 app:
-  networks:
-    storage:
-      namespace: storage
-      environment: prod
   environment:
     SERVER_PORT: '6080'
     MEET_NAME_ID: openviduMeet-MVP
@@ -39,6 +35,12 @@ app:
     replica_set: rs0
 
 compose:
+  x-composer:
+    networks:
+      storage:
+        namespace: storage
+        environment: prod
+
   services:
     meet:
       env_file:

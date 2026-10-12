@@ -1,5 +1,4 @@
 app:
-  network_alias: nginx
   listen: 8080
   resolver: 127.0.0.11
   resolver_valid: 5s

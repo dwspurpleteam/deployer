@@ -19,7 +19,7 @@ resolver {{ .Vars.app.resolver }} valid={{ .Vars.app.resolver_valid }} ipv6=off;
 {{ range .Environments }}
 upstream env_{{ . }} {
   zone env_{{ . }} 64k;
-  server {{ $.Vars.app.backend_alias }}-{{ . }}:{{ $.Vars.app.backend_port }} resolve;
+  server {{ $.Vars.app.backend_alias }}{{ if ne . "prod" }}-{{ . }}{{ end }}:{{ $.Vars.app.backend_port }} resolve;
 }
 {{ end }}
 

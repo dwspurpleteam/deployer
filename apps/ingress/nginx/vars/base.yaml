@@ -1,5 +1,4 @@
 app:
-  route_namespace: calls
   backend_alias: nginx
   backend_port: 8080
   domain: calls.vareonix.cc
@@ -14,6 +13,9 @@ app:
   proxy_max_temp_file_size: 0
 
 compose:
+  x-composer:
+    route_namespace: calls
+
   services:
     nginx:
       image: jonasal/nginx-certbot:6.2.0-alpine
