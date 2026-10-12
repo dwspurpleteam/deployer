@@ -9,17 +9,17 @@ app:
   env:
     REDISCLI_AUTH: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwTEhhNWRDZTVLN2ZiRWlXSkxEemhud05rV21ab3JtaHZvbmJqb0FCczFNCjVabUU1aG1BeUFDR1FOMm0rbTlvR0xtTTRabkp5QVA4Ym5xK3JZWVVHTm8KLS0tIG9xNTNoc0h3ekRMVjk1M2NJcXlVT3JqRG41WEJDZmRLSEdIS0RQbFh4MzgKYjFW9xpmbTgf0er2TTQyTBmhbLSf+83PXRpu1EwFGxCEk3kRH8c2M5/pUIvSFivw+o7+ugNQjLHAPeKtLO8/WBG+6ncK5qZ1+WASrWx8FUY=]
 
-users:
-  default:
-    password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwTEhhNWRDZTVLN2ZiRWlXSkxEemhud05rV21ab3JtaHZvbmJqb0FCczFNCjVabUU1aG1BeUFDR1FOMm0rbTlvR0xtTTRabkp5QVA4Ym5xK3JZWVVHTm8KLS0tIG9xNTNoc0h3ekRMVjk1M2NJcXlVT3JqRG41WEJDZmRLSEdIS0RQbFh4MzgKYjFW9xpmbTgf0er2TTQyTBmhbLSf+83PXRpu1EwFGxCEk3kRH8c2M5/pUIvSFivw+o7+ugNQjLHAPeKtLO8/WBG+6ncK5qZ1+WASrWx8FUY=]
-    rules: ~* &* +@all
-  meet:
-    password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCWWhmSk1kL1ZUcGk0YkhKb1RoMDJPVDZ3UWlTSFNEOFhQclVYSitXc0J3Cm9qR24waHlrN210M3Z5V0c2V1QyK0IyL2JsWlZyWmpjMm9OeWxNNWhTUGsKLS0tIFdzMVU1LzR0ZngvQXJHU1Rpb2I3K1RHSEd5STdibDh2YU55RVNoQmZnMkUKNK73cvak/e9dxWlcpX2ncTf64m7sDtBMa6piadF+9w7E5NT6pJ3+kYNdXe3QxpscDyYCDfa5xxrdRDlgcaf/ReVgbkpSBiCxbWRLOHzhLM8=]
-    rules: ~ov_meet* &* +@all -@admin -@dangerous +scan +info
-  # psrpc also stores locks as base64-encoded sha-256 keys (44 characters).
-  openvidu:
-    password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKZ0RTV0d3V2hnM2tYUks2WlJ6eWwrUS95UzM2b2pzcXgzN3AvcDZHcFdvClJwSkpVOGJ0TnBPOFlYT3I3cHIxVEdCdjJwUTVzQTlKVFFWcVhpM1JqVTgKLS0tIDNFUTFFT3VkK1dUdEV6RStHTk9qdlA2WFIwRWpLYUZUZ0RoL0I5UEViYTAK9EE5/Aphfiuhh4SNSzg9pv82gH2MS2xynXwixa+cLAQ2xTGFeGogR++8TvwVoPcpRK3K+Z7wR8ApMWI/SM6FKl5fPhGbgovNpqIlwESv6no=]
-    rules: ~???????????????????????????????????????????= ~node* ~entity-reconcile-lock ~room* ~livekit* ~egress* ~ended* ~ingress* ~{ingress}* ~agent* ~psrpc* ~signal* &* +@all -@admin -@dangerous +scan +info
+  users:
+    default:
+      password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBwTEhhNWRDZTVLN2ZiRWlXSkxEemhud05rV21ab3JtaHZvbmJqb0FCczFNCjVabUU1aG1BeUFDR1FOMm0rbTlvR0xtTTRabkp5QVA4Ym5xK3JZWVVHTm8KLS0tIG9xNTNoc0h3ekRMVjk1M2NJcXlVT3JqRG41WEJDZmRLSEdIS0RQbFh4MzgKYjFW9xpmbTgf0er2TTQyTBmhbLSf+83PXRpu1EwFGxCEk3kRH8c2M5/pUIvSFivw+o7+ugNQjLHAPeKtLO8/WBG+6ncK5qZ1+WASrWx8FUY=]
+      rules: ~* &* +@all
+    meet:
+      password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBCWWhmSk1kL1ZUcGk0YkhKb1RoMDJPVDZ3UWlTSFNEOFhQclVYSitXc0J3Cm9qR24waHlrN210M3Z5V0c2V1QyK0IyL2JsWlZyWmpjMm9OeWxNNWhTUGsKLS0tIFdzMVU1LzR0ZngvQXJHU1Rpb2I3K1RHSEd5STdibDh2YU55RVNoQmZnMkUKNK73cvak/e9dxWlcpX2ncTf64m7sDtBMa6piadF+9w7E5NT6pJ3+kYNdXe3QxpscDyYCDfa5xxrdRDlgcaf/ReVgbkpSBiCxbWRLOHzhLM8=]
+      rules: ~ov_meet* &* +@all -@admin -@dangerous +scan +info
+    # psrpc also stores locks as base64-encoded sha-256 keys (44 characters).
+    openvidu:
+      password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKZ0RTV0d3V2hnM2tYUks2WlJ6eWwrUS95UzM2b2pzcXgzN3AvcDZHcFdvClJwSkpVOGJ0TnBPOFlYT3I3cHIxVEdCdjJwUTVzQTlKVFFWcVhpM1JqVTgKLS0tIDNFUTFFT3VkK1dUdEV6RStHTk9qdlA2WFIwRWpLYUZUZ0RoL0I5UEViYTAK9EE5/Aphfiuhh4SNSzg9pv82gH2MS2xynXwixa+cLAQ2xTGFeGogR++8TvwVoPcpRK3K+Z7wR8ApMWI/SM6FKl5fPhGbgovNpqIlwESv6no=]
+      rules: ~???????????????????????????????????????????= ~node* ~entity-reconcile-lock ~room* ~livekit* ~egress* ~ended* ~ingress* ~{ingress}* ~agent* ~psrpc* ~signal* &* +@all -@admin -@dangerous +scan +info
 
 compose:
   services:

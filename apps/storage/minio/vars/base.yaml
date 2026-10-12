@@ -1,3 +1,7 @@
+build:
+  repository: https://github.com/minio/mc.git
+  tag: RELEASE.2025-08-13T08-35-41Z
+
 app:
   env:
     MINIO_ROOT_USER: minioadmin
@@ -6,35 +10,31 @@ app:
     MINIO_BROWSER: 'off'
     MINIO_UPDATE: 'off'
 
-endpoint: http://minio:9000
+  endpoint: http://minio:9000
 
-users:
-- name: meet
-  password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZHJKYjErUDkxMm0xOEtHNUJMMFpIVklrZU83TUZrdTFaY2RqTHFRNno0ClliQVZXK2hYTDI1WHZPbjdzWDBjWFhUTFBIZk5hTnJDbGFUQXdrMVNPdm8KLS0tIEV4OG1FRWNESXFaaVVZUWM2QVRSSjNhUTlLWHVRNmF4MFVSMHBMVDE2KzAKR2iTaDzYbhvrFGnMlyS0blk8X9jAnqxp8hqOO5yFZYsljQp8HeKVfE08cdFr13WvXlD6MnjV9s+uAzELUwf5ubUTWwLwvHECIioeq5EdBP8=]
-  policy: meet
+  users:
+  - name: meet
+    password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZHJKYjErUDkxMm0xOEtHNUJMMFpIVklrZU83TUZrdTFaY2RqTHFRNno0ClliQVZXK2hYTDI1WHZPbjdzWDBjWFhUTFBIZk5hTnJDbGFUQXdrMVNPdm8KLS0tIEV4OG1FRWNESXFaaVVZUWM2QVRSSjNhUTlLWHVRNmF4MFVSMHBMVDE2KzAKR2iTaDzYbhvrFGnMlyS0blk8X9jAnqxp8hqOO5yFZYsljQp8HeKVfE08cdFr13WvXlD6MnjV9s+uAzELUwf5ubUTWwLwvHECIioeq5EdBP8=]
+    policy: meet
 
-policy:
-  Version: '2012-10-17'
-  Statement:
-  - Effect: Allow
-    Action:
-    - s3:ListBucket
-    - s3:GetBucketLocation
-    Resource:
-    - arn:aws:s3:::openvidu-appdata
-  - Effect: Allow
-    Action:
-    - s3:GetObject
-    - s3:PutObject
-    - s3:DeleteObject
-    - s3:AbortMultipartUpload
-    - s3:ListMultipartUploadParts
-    Resource:
-    - arn:aws:s3:::openvidu-appdata/*
-
-build:
-  repository: https://github.com/minio/mc.git
-  tag: RELEASE.2025-08-13T08-35-41Z
+  policy:
+    Version: '2012-10-17'
+    Statement:
+    - Effect: Allow
+      Action:
+      - s3:ListBucket
+      - s3:GetBucketLocation
+      Resource:
+      - arn:aws:s3:::openvidu-appdata
+    - Effect: Allow
+      Action:
+      - s3:GetObject
+      - s3:PutObject
+      - s3:DeleteObject
+      - s3:AbortMultipartUpload
+      - s3:ListMultipartUploadParts
+      Resource:
+      - arn:aws:s3:::openvidu-appdata/*
 
 compose:
   services:

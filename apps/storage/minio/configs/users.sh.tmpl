@@ -2,9 +2,9 @@ set -eu
 
 export MC_CONFIG_DIR=/tmp/mc
 
-mc alias set storage {{ quote .Vars.endpoint }} "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
+mc alias set storage {{ quote .Vars.app.endpoint }} "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
 
-{{ range .Vars.users }}
+{{ range .Vars.app.users }}
 mc admin user add storage {{ quote .name }} {{ quote .password }} >/dev/null
 
 mc admin policy create storage {{ quote .policy }} /config/policy.json >/dev/null
