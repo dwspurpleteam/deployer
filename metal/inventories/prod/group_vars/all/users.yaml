@@ -21,6 +21,15 @@ users_accounts:
     sudo: true
     sudo_nopasswd: true
 
+  - name: nutsalhan87
+    fullname: Nutsalkhan Nutsalkhanov
+    groups:
+      - docker
+    ssh_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDUR4U3rHiME/lfJxxzDf5yfjYP4lLI7htrX41st37Upjq6ZEAtXRL9C4GlxdXlyEEYgp21PRDvSIzH062z1cDVdu0S5MLmk2WomLrh5QohH5HpxeXYvITHnfYNboPYYYl5IeilSBAatz1ozT/S9huHMw4czSEeVgIM0Iy4onUcQ05/2Y5KiJciRwbu0HX4YlVppV0kqAZQzkuBJVP1oxZKXpJt/CS7cyuj1OHBjJEYghjfj+Vfa45x2y609wq8IHNzXKhUqPxsjlnU4rCjn4RwZ6M8vuYw6AeOInH9DHcuqYsSpvuNlFdNBts5fUf/fW0bZcIJU91vujEpnOgsZudZW4daiNBQeRB9iGLuEQ3vATuvYeneYaQZlPZ2Az30L8rSMrs428/dFmxUoKmgdM9cQPmAclaUdUg0i6TQBhWCHMiITdhMnIBP/0BE6JoPVDc2Wem2jbKy50S8hCmcny4R5J1FKP0V1QhvhWZn+iGuX6Vas3Guh0Z9gnofHFPIpY0= nutsalhan87@Home-PC
+    sudo: true
+    sudo_nopasswd: true
+
 users_groups:
   - name: docker
 
