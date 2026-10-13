@@ -18,14 +18,8 @@ app:
     - http://meet-stage:6080/livekit/webhook
 
 compose:
-  x-composer:
-    networks:
-      storage: null
-
   services:
     openvidu:
-      networks:
-        storage: null
       ports:
       - 8881:8881/tcp
       - 8900-8999:8900-8999/udp

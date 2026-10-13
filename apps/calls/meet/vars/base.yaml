@@ -36,12 +36,6 @@ app:
     MEET_S3_WITH_PATH_STYLE_ACCESS: 'true'
 
 compose:
-  x-composer:
-    networks:
-      storage:
-        namespace: storage
-        environment: prod
-
   services:
     meet:
       env_file:

@@ -38,21 +38,12 @@ app:
     pion_level: warn
 
 compose:
-  x-composer:
-    networks:
-      storage:
-        namespace: storage
-        environment: prod
-
   services:
     openvidu:
       command: --config /etc/livekit.yaml
       networks:
         default:
           interface_name: media
-          gw_priority: 1
-        storage:
-          interface_name: storage
       ports:
       - 7881:7881/tcp
       - 7900-7999:7900-7999/udp
