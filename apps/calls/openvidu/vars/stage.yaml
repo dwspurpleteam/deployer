@@ -20,6 +20,7 @@ app:
 compose:
   services:
     openvidu:
+      mem_limit: 256m
       ports:
       - 8881:8881/tcp
       - 8900-8999:8900-8999/udp
