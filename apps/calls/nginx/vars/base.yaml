@@ -19,7 +19,7 @@ compose:
       image: nginx:1.28.2-alpine
       volumes:
       - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      mem_limit: 128m
+      mem_limit: 64m
       healthcheck:
         test: wget -qO- http://127.0.0.1:8080/healthz
         interval: 5s

@@ -32,7 +32,7 @@ compose:
       - ./configs/service.env
       volumes:
       - data:/bitnami/mongodb
-      mem_limit: 768m
+      mem_limit: 1g
       ulimits:
         nofile:
           soft: 64000
