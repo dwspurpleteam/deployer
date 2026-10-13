@@ -26,16 +26,12 @@ compose:
       volumes:
       - data:/data
 
-    mongodb:
+    mongo:
       image: openvidu/mongodb:8.0.29-r1
       env_file:
       - ./configs/service.env
       volumes:
       - data:/bitnami/mongodb
-      networks:
-        default:
-          aliases:
-          - mongo
       mem_limit: 768m
       ulimits:
         nofile:
@@ -60,7 +56,7 @@ compose:
       volumes:
       - ./configs/users.js:/config/users.js:ro
       depends_on:
-        mongodb:
+        mongo:
           condition: service_healthy
 
   volumes:

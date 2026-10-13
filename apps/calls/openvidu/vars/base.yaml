@@ -10,9 +10,6 @@ app:
   rtc:
     node_ip: 153.76.163.163
     use_external_ip: false
-    interfaces:
-      includes:
-      - media
     tcp_port: 7881
     port_range_start: 7900
     port_range_end: 7999
@@ -22,7 +19,6 @@ app:
     password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKZ0RTV0d3V2hnM2tYUks2WlJ6eWwrUS95UzM2b2pzcXgzN3AvcDZHcFdvClJwSkpVOGJ0TnBPOFlYT3I3cHIxVEdCdjJwUTVzQTlKVFFWcVhpM1JqVTgKLS0tIDNFUTFFT3VkK1dUdEV6RStHTk9qdlA2WFIwRWpLYUZUZ0RoL0I5UEViYTAK9EE5/Aphfiuhh4SNSzg9pv82gH2MS2xynXwixa+cLAQ2xTGFeGogR++8TvwVoPcpRK3K+Z7wR8ApMWI/SM6FKl5fPhGbgovNpqIlwESv6no=]
   turn:
     enabled: true
-    relay_preferred_interface: media
     udp_port: 3478
     relay_range_start: 40000
     relay_range_end: 40050
@@ -41,9 +37,6 @@ compose:
   services:
     openvidu:
       command: --config /etc/livekit.yaml
-      networks:
-        default:
-          interface_name: media
       ports:
       - 7881:7881/tcp
       - 7900-7999:7900-7999/udp
