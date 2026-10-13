@@ -25,9 +25,9 @@ jobs:
       - name: run ansible
         working-directory: metal
         env:
-          ANSIBLE_SSH_USER: ${{ secrets.ANSIBLE_SSH_USER }}
+          ANSIBLE_REMOTE_USER: ${{ secrets.ANSIBLE_SSH_USER }}
           ANSIBLE_PRIVATE_KEY: ${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}
           ANSIBLE_SSH_AGENT: auto
         run: |
           ansible-galaxy collection install -r requirements.yml
-          ansible-playbook cluster.yml -e "ansible_user=$ANSIBLE_SSH_USER"
+          ansible-playbook cluster.yml

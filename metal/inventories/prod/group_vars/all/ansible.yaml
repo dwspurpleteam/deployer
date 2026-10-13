@@ -1,2 +1,1 @@
-ansible_user: autobot
 ansible_python_interpreter: /usr/bin/python3
