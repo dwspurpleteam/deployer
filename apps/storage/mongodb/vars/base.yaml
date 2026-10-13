@@ -18,7 +18,7 @@ app:
 
 compose:
   services:
-    permissions:
+    mongodb-permissions:
       image: busybox:1.38.0
       restart: 'no'
       user: 0:0
@@ -47,10 +47,10 @@ compose:
         timeout: 5s
         retries: 12
       depends_on:
-        permissions:
+        mongodb-permissions:
           condition: service_completed_successfully
 
-    users:
+    mongodb-users:
       image: openvidu/mongodb:8.0.29-r1
       restart: 'no'
       entrypoint: /opt/bitnami/mongodb/bin/mongosh
