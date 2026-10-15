@@ -33,6 +33,7 @@ flowchart LR
     mongodb[MongoDB]
     redis[Redis]
     minio[MinIO]
+    nats["NATS JetStream"]
   end
 
   meet --> mongodb
