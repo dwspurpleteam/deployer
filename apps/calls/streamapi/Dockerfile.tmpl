@@ -8,14 +8,14 @@ RUN git clone {{ quote .Vars.build.repository }} . \
     && git checkout {{ quote .Vars.build.tag }}
 
 ARG TARGETARCH
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -p 2 -trimpath -ldflags='-s -w' -o /out/callrelay ./cmd/callrelay
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH go build -p 2 -trimpath -ldflags='-s -w' -o /out/streamapi ./cmd/...
 
 FROM alpine:3.24.1
 
 RUN apk add --no-cache ca-certificates
 LABEL org.opencontainers.image.source={{ quote .Vars.build.repository }}
 LABEL org.opencontainers.image.revision={{ quote .Vars.build.tag }}
-COPY --from=builder /out/callrelay /callrelay
+COPY --from=builder /out/streamapi /streamapi
 
 USER 65532:65532
-ENTRYPOINT ["/callrelay"]
+ENTRYPOINT ["/streamapi"]

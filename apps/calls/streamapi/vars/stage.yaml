@@ -1,16 +1,17 @@
 app:
+  name: streamapi-stage
   livekit:
     api_key: stage532910cf053299bb53b91806
     api_secret: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxWnRjUFdhejdNSjJUVXNyRDNGSXV4THFhdjFPWVhBc3c5MVpjbEt2NVhRClRoUlllM241b2ZRbDh4TTBYWU1BdytEdWl0NXhwN1pEOERyVElIYzhwOFEKLS0tIFU0Mm5SaDVuQkFaV0V5ZUNKM0lFZWxtM040NHFPQlFVbkp6eHJCekZtZWcKKGWyQRhAp2MWj71h6Nks/4PKdO683dOkcDKSN44q8tswbl8dtHdE3L5AwBNPKC29ZJDIbP7QTFzz/4JdD8oolAkgZW8eNTxFg7pK9F159eAhKvYzNqFzQUFl0tzZlPzv]
     url: ws://openvidu-stage:7880
     event_source: livekit-stage
   nats:
-    stream: CALLRELAY_STAGE_EVENTS
-    prefix: callrelay.stage.v1
+    stream: STREAMAPI_STAGE_EVENTS
+    prefix: streamapi.stage.v1
 
 compose:
   services:
-    callrelay:
+    streamapi:
       ports:
       - 127.0.0.1:29090:19090
       - 127.0.0.1:29080:19080

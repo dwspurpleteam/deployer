@@ -16,7 +16,7 @@ app:
     api_key: "stage532910cf053299bb53b91806"
     urls:
     - http://meet-stage:6080/livekit/webhook
-    - http://callrelay-stage:19080/webhooks/livekit
+    - http://streamapi-stage:19080/webhooks/livekit
 
 compose:
   services:

@@ -1,8 +1,9 @@
 build:
-  repository: https://github.com/dwspurpleteam/callrelay.git
-  tag: 49301f5d4168d7c3b09cf7279a11db300dd265e9
+  repository: https://github.com/dwspurpleteam/streamapi.git
+  tag: 0cf6fbf3a7d71824a76b7b5f01cced76a84ff66c
 
 app:
+  name: streamapi
   grpc:
     latency_buckets_seconds: [0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2]
     max_concurrent_streams: 512
@@ -68,8 +69,8 @@ app:
     username: admin
     password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4VmdoQVJGd3F1T3JBZ3ZyY0ZhRDl0bEdyZXg5eVBnNGVydE9PMG4wYUhjClZVNittOHJXV1dYUnR6SzRzNjBQcEYwSSs4MFhHSk1wZDZkSDFENXJzZmcKLS0tIHRNZ2dDUWZPWURwNFVWZWZmYjUwRzVDbVpSc3M3U1haZWw1SGNGZ252c00K0Uc5o68I2xVDUMT0WANSmz4O4ynNe7eaKmKqr1v1f6sgh2KUvaM7WFj/5cv6Rr7UQalwDy8Z//s40GEKTLNf/KmiXeWW9Ypx2rqG/79njvpLfA7mI6cgl/NWwfOzqKZd]
     url: nats://nats:4222
-    stream: CALLRELAY_EVENTS
-    prefix: callrelay.v1
+    stream: STREAMAPI_EVENTS
+    prefix: streamapi.v1
     max_bytes: 33554432
     max_age: 3600s
     duplicate_window: 120s
@@ -85,12 +86,12 @@ app:
 
 compose:
   services:
-    callrelay:
-      command: --config /etc/callrelay.yaml
+    streamapi:
+      command: --config /etc/streamapi.yaml
       environment:
         GOMEMLIMIT: 192MiB
       volumes:
-      - ./configs/callrelay.yaml:/etc/callrelay.yaml:ro
+      - ./configs/streamapi.yaml:/etc/streamapi.yaml:ro
       ports:
       - 127.0.0.1:19090:19090
       - 127.0.0.1:19080:19080
