@@ -1,84 +1,94 @@
 build:
   repository: https://github.com/dwspurpleteam/callrelay.git
-  tag: d817683bb12b4f737d8de84f9aafe3257c29e2c2
+  tag: 49301f5d4168d7c3b09cf7279a11db300dd265e9
 
 app:
-  config:
-    grpc:
-      latency_buckets_seconds: [0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2]
-      max_concurrent_streams: 512
-      address: 0.0.0.0:19090
-      connections: 128
-      max_message_bytes: 65536
-      write_buffer_bytes: 32768
-      stream_window_bytes: 65536
-      connection_window_bytes: 1048576
-      send_timeout: 1000ms
-      max_header_bytes: 16384
-      keepalive_time: 2m
-      keepalive_timeout: 20s
-    http:
-      metrics_concurrency: 2
-      metrics_timeout: 1s
-      address: 0.0.0.0:19080
-      connections: 64
-      max_body_bytes: 32768
-      concurrency: 32
-      profiling: false
-      timeout: 5000ms
-      max_header_bytes: 16384
-    media:
+  grpc:
+    latency_buckets_seconds: [0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2]
+    max_concurrent_streams: 512
+    address: 0.0.0.0:19090
+    connections: 128
+    max_message_bytes: 65536
+    write_buffer_bytes: 32768
+    stream_window_bytes: 65536
+    connection_window_bytes: 1048576
+    send_timeout: 1000ms
+    max_header_bytes: 16384
+    keepalive_time: 2m
+    keepalive_timeout: 20s
+  http:
+    metrics_concurrency: 2
+    metrics_timeout: 1s
+    address: 0.0.0.0:19080
+    connections: 64
+    max_body_bytes: 32768
+    concurrency: 32
+    profiling: false
+    timeout: 5000ms
+    max_header_bytes: 16384
+  media:
+    max_subscriptions: 512
+    max_per_call: 256
+    queue_packets: 64
+    queue_bytes: 262144
+    max_reserved_bytes: 67108864
+    egress_bytes_per_second: 125000000
+    egress_burst_bytes: 12500000
+    queue_age: 1000ms
+  events:
+    concurrency: 32
+    publish_timeout: 1s
+    delivery:
       max_subscriptions: 512
       max_per_call: 256
-      queue_packets: 64
-      queue_bytes: 262144
-      max_reserved_bytes: 67108864
-      egress_bytes_per_second: 125000000
-      egress_burst_bytes: 12500000
-      queue_age: 1000ms
-    events:
-      concurrency: 32
-      publish_timeout: 1s
-    livekit:
-      url: ws://openvidu:7880
-      max_tracks: 64
-      max_packet_bytes: 4096
-      connect_timeout: 5000ms
-      read_timeout: 500ms
-      token_ttl: 3600s
-      event_source: livekit
-      event_types:
-        room_started: call.started
-        room_finished: call.ended
-        participant_joined: participant.joined
-        participant_left: participant.left
-        track_published: track.published
-        track_unpublished: track.unpublished
-    nats:
-      url: nats://nats:4222
-      stream: CALLRELAY_EVENTS
-      prefix: callrelay.v1
-      max_bytes: 33554432
-      max_age: 3600s
-      duplicate_window: 120s
-      timeout: 1000ms
-      max_message_bytes: 65536
-      reconnect_wait: 1s
-      recovery_interval: 1s
-    shutdown_timeout: 10000ms
-  env:
-    LIVEKIT_API_KEY: mvpkey
-    LIVEKIT_API_SECRET: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArL0tJZThoYVdnUk15UzlRMFo4d0psQW93dzZLSTM0eC8wcHlhL2tpTkU0Cjl4azNyYjNFNmlCMWt4bi9meCtnQnkwM25ZUjVvZmxFWFNJTnJocGxFWE0KLS0tIG9iSm5HZm8wN3JqMFBTMXFOUy9DZS9ZcUV4dWpxZFU0QzJnbHQrV3NOOWMKzQQBuw4wjqgrR5H4MyVlf9iy56iA4Qze8BiY3xgEqepq36Sbqngz/CQBnsQxx4k9sPurxXcxrQL29qjMUlRdB297lryVaD9i44KwUVc+gCY=]
-    NATS_USER: admin
-    NATS_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4VmdoQVJGd3F1T3JBZ3ZyY0ZhRDl0bEdyZXg5eVBnNGVydE9PMG4wYUhjClZVNittOHJXV1dYUnR6SzRzNjBQcEYwSSs4MFhHSk1wZDZkSDFENXJzZmcKLS0tIHRNZ2dDUWZPWURwNFVWZWZmYjUwRzVDbVpSc3M3U1haZWw1SGNGZ252c00K0Uc5o68I2xVDUMT0WANSmz4O4ynNe7eaKmKqr1v1f6sgh2KUvaM7WFj/5cv6Rr7UQalwDy8Z//s40GEKTLNf/KmiXeWW9Ypx2rqG/79njvpLfA7mI6cgl/NWwfOzqKZd]
-    GOMEMLIMIT: 192MiB
+      max_filters: 32
+      queue_events: 64
+      queue_bytes: 65536
+      queue_age: 1s
+      max_reserved_bytes: 16777216
+      send_timeout: 1s
+  livekit:
+    api_key: mvpkey
+    api_secret: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArL0tJZThoYVdnUk15UzlRMFo4d0psQW93dzZLSTM0eC8wcHlhL2tpTkU0Cjl4azNyYjNFNmlCMWt4bi9meCtnQnkwM25ZUjVvZmxFWFNJTnJocGxFWE0KLS0tIG9iSm5HZm8wN3JqMFBTMXFOUy9DZS9ZcUV4dWpxZFU0QzJnbHQrV3NOOWMKzQQBuw4wjqgrR5H4MyVlf9iy56iA4Qze8BiY3xgEqepq36Sbqngz/CQBnsQxx4k9sPurxXcxrQL29qjMUlRdB297lryVaD9i44KwUVc+gCY=]
+    url: ws://openvidu:7880
+    max_tracks: 64
+    max_packet_bytes: 4096
+    connect_timeout: 5000ms
+    read_timeout: 500ms
+    token_ttl: 3600s
+    event_source: livekit
+    event_types:
+      room_started: call.started
+      room_finished: call.ended
+      participant_joined: participant.joined
+      participant_left: participant.left
+      track_published: track.published
+      track_unpublished: track.unpublished
+  nats:
+    username: admin
+    password: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4VmdoQVJGd3F1T3JBZ3ZyY0ZhRDl0bEdyZXg5eVBnNGVydE9PMG4wYUhjClZVNittOHJXV1dYUnR6SzRzNjBQcEYwSSs4MFhHSk1wZDZkSDFENXJzZmcKLS0tIHRNZ2dDUWZPWURwNFVWZWZmYjUwRzVDbVpSc3M3U1haZWw1SGNGZ252c00K0Uc5o68I2xVDUMT0WANSmz4O4ynNe7eaKmKqr1v1f6sgh2KUvaM7WFj/5cv6Rr7UQalwDy8Z//s40GEKTLNf/KmiXeWW9Ypx2rqG/79njvpLfA7mI6cgl/NWwfOzqKZd]
+    url: nats://nats:4222
+    stream: CALLRELAY_EVENTS
+    prefix: callrelay.v1
+    max_bytes: 33554432
+    max_age: 3600s
+    duplicate_window: 120s
+    timeout: 1000ms
+    max_message_bytes: 65536
+    reconnect_wait: 1s
+    recovery_interval: 1s
+    consumer_batch_bytes: 1048576
+    consumer_buffer_events: 32
+    consumer_pull_expiry: 5s
+    consumer_inactive_threshold: 30s
+  shutdown_timeout: 10000ms
 
 compose:
   services:
     callrelay:
       command: --config /etc/callrelay.yaml
-      env_file:
-      - ./configs/service.env
+      environment:
+        GOMEMLIMIT: 192MiB
       volumes:
       - ./configs/callrelay.yaml:/etc/callrelay.yaml:ro
       ports:
