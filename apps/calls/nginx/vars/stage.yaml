@@ -2,9 +2,11 @@ app:
   upstreams:
     meet: meet-stage:6080
     openvidu: openvidu-stage:7880
-    streamapi: streamapi-stage:19080
-  streamapi_grpc:
-    upstream: streamapi-stage:19090
+  streamapi:
+    http:
+      upstream: streamapi-stage:19080
+    grpc:
+      upstream: streamapi-stage:19090
 
 compose:
   services:

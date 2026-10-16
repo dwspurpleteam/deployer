@@ -23,6 +23,15 @@ upstream env_{{ . }} {
 }
 {{ end }}
 
+{{ if .Vars.app.streamapi.enabled }}
+{{ range $.Environments }}
+upstream grpc_env_{{ . }} {
+  zone grpc_env_{{ . }} 64k;
+  server {{ $.Vars.app.backend_alias }}{{ if ne . "prod" }}-{{ . }}{{ end }}:{{ $.Vars.app.streamapi.grpc.backend_port }} resolve;
+}
+{{ end }}
+{{ end }}
+
 server {
   listen {{ .Vars.app.https_port }} ssl;
   http2 on;
@@ -52,4 +61,19 @@ server {
     proxy_read_timeout {{ .Vars.app.proxy_timeout }};
     proxy_max_temp_file_size {{ .Vars.app.proxy_max_temp_file_size }};
   }
+
+{{ if .Vars.app.streamapi.enabled }}
+  http2_max_concurrent_streams {{ .Vars.app.streamapi.grpc.max_concurrent_streams }};
+
+{{ range .Vars.app.streamapi.grpc.routes }}
+  location = {{ . }} {
+    if ($environment_backend = "") { return 503; }
+
+    grpc_pass grpc://grpc_$environment_backend;
+    grpc_connect_timeout {{ $.Vars.app.streamapi.grpc.connect_timeout }};
+    grpc_read_timeout {{ $.Vars.app.streamapi.grpc.read_timeout }};
+    grpc_send_timeout {{ $.Vars.app.streamapi.grpc.send_timeout }};
+  }
+{{ end }}
+{{ end }}
 }

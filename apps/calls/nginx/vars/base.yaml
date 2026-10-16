@@ -4,23 +4,33 @@ app:
   resolver_valid: 5s
   max_body_size: 10m
   proxy_timeout: 3600s
-  streamapi_http_listen: 19080
-  streamapi_grpc:
-    listen: 19090
-    upstream: streamapi:19090
-    connect_timeout: 1s
-    read_timeout: 24h
-    send_timeout: 3600s
-    max_concurrent_streams: 512
   redirect: /meet/
   absolute_redirect: 'off'
   upstreams:
     meet: meet:6080
     openvidu: openvidu:7880
-    streamapi: streamapi:19080
   routes:
     /meet: meet
     /rtc: openvidu
+  streamapi:
+    enabled: true
+    http:
+      listen: 19080
+      upstream: streamapi:19080
+      webhook:
+        connect_timeout: 1s
+        send_timeout: 3s
+        read_timeout: 3s
+        retry_timeout: 5s
+        attempts: 2
+    grpc:
+      listen: 19090
+      upstream: streamapi:19090
+      hash: $streamapi_call_key
+      connect_timeout: 1s
+      read_timeout: 24h
+      send_timeout: 3600s
+      max_concurrent_streams: 512
 
 compose:
   services:

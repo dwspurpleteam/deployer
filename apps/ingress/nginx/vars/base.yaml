@@ -12,6 +12,17 @@ app:
   max_body_size: 10m
   proxy_timeout: 3600s
   proxy_max_temp_file_size: 0
+  streamapi:
+    enabled: true
+    grpc:
+      backend_port: 19090
+      routes:
+      - /streamapi.v1.MediaService/Subscribe
+      - /streamapi.v1.EventService/Subscribe
+      connect_timeout: 1s
+      read_timeout: 24h
+      send_timeout: 3600s
+      max_concurrent_streams: 512
 
 compose:
   services:
