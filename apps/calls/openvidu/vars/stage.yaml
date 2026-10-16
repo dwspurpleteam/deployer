@@ -7,11 +7,11 @@ app:
   rtc:
     tcp_port: 8881
     port_range_start: 8900
-    port_range_end: 8999
+    port_range_end: 9399
   turn:
     udp_port: 3479
-    relay_range_start: 40100
-    relay_range_end: 40150
+    relay_range_start: 40500
+    relay_range_end: 40999
   webhook:
     api_key: "stage532910cf053299bb53b91806"
     urls:
@@ -24,6 +24,6 @@ compose:
       mem_limit: 256m
       ports:
       - 8881:8881/tcp
-      - 8900-8999:8900-8999/udp
+      - 8900-9399:8900-9399/udp
       - 3479:3479/udp
-      - 40100-40150:40100-40150/udp
+      - 40500-40999:40500-40999/udp

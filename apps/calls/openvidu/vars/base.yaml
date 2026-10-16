@@ -12,7 +12,7 @@ app:
     use_external_ip: false
     tcp_port: 7881
     port_range_start: 7900
-    port_range_end: 7999
+    port_range_end: 8399
   redis:
     address: redis:6379
     username: openvidu
@@ -21,7 +21,7 @@ app:
     enabled: true
     udp_port: 3478
     relay_range_start: 40000
-    relay_range_end: 40050
+    relay_range_end: 40499
   webhook:
     api_key: "mvpkey"
     urls:
@@ -40,9 +40,9 @@ compose:
       command: --config /etc/livekit.yaml
       ports:
       - 7881:7881/tcp
-      - 7900-7999:7900-7999/udp
+      - 7900-8399:7900-8399/udp
       - 3478:3478/udp
-      - 40000-40050:40000-40050/udp
+      - 40000-40499:40000-40499/udp
       volumes:
       - ./configs/livekit.yaml:/etc/livekit.yaml:ro
       mem_limit: 1g

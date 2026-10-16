@@ -1,4 +1,6 @@
 app:
+  worker_processes: auto
+  worker_connections: 8192
   stage_token: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBXMkVidVFNU0lESHI5UkVJaWdYTTdGekkzZG5RdUtrTnN3ekwzV0NTM2tFCndHQlZiKzRaMndoR0tvUHppKzlxbXVqdjk4UkVUQWFSNkgxUVAxT1dBRzgKLS0tIGg0YW5hM2dVaHVxY1AxWU13YjFsMW95S0RkY0FSd045Z0dHZjN6UWdSNncKRDt5ggdbHGn2L5fOmrDlrYZtgzJu7oBWAF5Ajv45YL/4OK/AQr0J8EuyfHVJSQaTwONSSTAL+XBcHx+ZdAE7m5azSOkRxq2+1ga3krcIKpw=]
   backend_alias: nginx
   backend_port: 8080
@@ -35,10 +37,15 @@ compose:
       - 80:80
       - 443:443
       volumes:
+      - ./configs/main.conf:/etc/nginx/nginx.conf:ro
       - ./configs/nginx.conf:/etc/nginx/user_conf.d/nginx.conf:ro
       - ./configs/redirector.conf:/etc/nginx/conf.d/redirector.conf:ro
       - letsencrypt:/etc/letsencrypt
       mem_limit: 256m
+      ulimits:
+        nofile:
+          soft: 65536
+          hard: 65536
       healthcheck:
         test: wget --no-check-certificate -qO- https://127.0.0.1/healthz
         interval: 10s

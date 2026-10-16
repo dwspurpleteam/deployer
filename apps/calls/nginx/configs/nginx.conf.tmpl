@@ -21,6 +21,8 @@ map $http_x_call_id $streamapi_call_key {
 upstream streamapi {
   zone streamapi 64k;
   server {{ .Vars.app.streamapi.http.upstream }} resolve;
+  keepalive {{ .Vars.app.streamapi.http.keepalive }};
+  keepalive_timeout {{ .Vars.app.streamapi.http.keepalive_timeout }};
 }
 
 upstream streamapi_grpc {

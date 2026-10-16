@@ -15,3 +15,17 @@
     name: docker
     state: started
     enabled: true
+
+- name: configure docker daemon
+  ansible.builtin.copy:
+    content: |
+      {
+        "live-restore": true,
+        "userland-proxy": false
+      }
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: '0644'
+    validate: dockerd --validate --config-file %s
+  notify: apply docker configuration

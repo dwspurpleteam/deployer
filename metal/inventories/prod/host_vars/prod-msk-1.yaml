@@ -15,16 +15,16 @@ firewall_rules:
     proto: tcp
   - port: '3478'
     proto: udp
-  - port: 7900:7999
+  - port: 7900:8399
     proto: udp
-  - port: 40000:40050
+  - port: 40000:40499
     proto: udp
 
   - port: '8881'
     proto: tcp
   - port: '3479'
     proto: udp
-  - port: 8900:8999
+  - port: 8900:9399
     proto: udp
-  - port: 40100:40150
+  - port: 40500:40999
     proto: udp

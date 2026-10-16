@@ -1,4 +1,6 @@
 app:
+  worker_processes: auto
+  worker_connections: 8192
   listen: 8080
   resolver: 127.0.0.11
   resolver_valid: 5s
@@ -17,6 +19,8 @@ app:
     http:
       listen: 19080
       upstream: streamapi:19080
+      keepalive: 16
+      keepalive_timeout: 4s
       webhook:
         connect_timeout: 1s
         send_timeout: 3s
@@ -37,11 +41,16 @@ compose:
     nginx:
       image: nginx:1.28.2-alpine
       volumes:
+      - ./configs/main.conf:/etc/nginx/nginx.conf:ro
       - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       ports:
       - 127.0.0.1:19080:19080
       - 127.0.0.1:19090:19090
       mem_limit: 64m
+      ulimits:
+        nofile:
+          soft: 65536
+          hard: 65536
       healthcheck:
         test: wget -qO- http://127.0.0.1:8080/healthz
         interval: 5s

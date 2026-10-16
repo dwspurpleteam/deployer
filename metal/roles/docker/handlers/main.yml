@@ -1,0 +1,19 @@
+---
+- name: reload docker configuration
+  ansible.builtin.service:
+    name: docker
+    state: reloaded
+  listen: apply docker configuration
+
+- name: check docker live restore
+  ansible.builtin.command: docker info
+  register: docker_info
+  changed_when: false
+  failed_when: "'Live Restore Enabled: true' not in docker_info.stdout"
+  listen: apply docker configuration
+
+- name: restart docker
+  ansible.builtin.service:
+    name: docker
+    state: restarted
+  listen: apply docker configuration
