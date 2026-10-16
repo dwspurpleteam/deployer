@@ -21,12 +21,14 @@ flowchart LR
     stage[NGINX] --> stage_meet[OpenVidu Meet]
     stage --> stage_openvidu[OpenVidu LiveKit]
     stage_meet --> stage_openvidu
+    stage_openvidu -->|media / events| stage_callrelay[callrelay]
   end
 
   subgraph calls_prod["Calls (prod)"]
     proxy["NGINX"] --> meet[OpenVidu Meet]
     proxy --> openvidu[OpenVidu LiveKit]
     meet --> openvidu
+    openvidu -->|media / events| callrelay
   end
 
   subgraph storage["Storage (prod)"]
@@ -43,4 +45,6 @@ flowchart LR
   stage_meet --> redis
   stage_meet --> minio
   openvidu --> redis
+  callrelay --> nats
+  stage_callrelay --> nats
 ```
