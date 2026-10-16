@@ -1,6 +1,6 @@
 build:
   repository: https://github.com/dwspurpleteam/streamapi.git
-  tag: 9c3bbf5f4a54e344cecbd476ef690425f1629c8f
+  tag: v1.0.0
 
 app:
   name: streamapi
@@ -91,10 +91,10 @@ compose:
       environment:
         GOMEMLIMIT: 192MiB
       volumes:
-      - ./configs/streamapi.yaml:/etc/streamapi.yaml:ro
+        - ./configs/streamapi.yaml:/etc/streamapi.yaml:ro
       ports:
-      - 127.0.0.1:19090:19090
-      - 127.0.0.1:19080:19080
+        - 127.0.0.1:19090:19090
+        - 127.0.0.1:19080:19080
       mem_limit: 256m
       stop_grace_period: 15s
       healthcheck:
