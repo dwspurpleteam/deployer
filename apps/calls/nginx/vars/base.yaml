@@ -4,11 +4,20 @@ app:
   resolver_valid: 5s
   max_body_size: 10m
   proxy_timeout: 3600s
+  streamapi_http_listen: 19080
+  streamapi_grpc:
+    listen: 19090
+    upstream: streamapi:19090
+    connect_timeout: 1s
+    read_timeout: 24h
+    send_timeout: 3600s
+    max_concurrent_streams: 512
   redirect: /meet/
   absolute_redirect: 'off'
   upstreams:
     meet: meet:6080
     openvidu: openvidu:7880
+    streamapi: streamapi:19080
   routes:
     /meet: meet
     /rtc: openvidu
@@ -19,6 +28,9 @@ compose:
       image: nginx:1.28.2-alpine
       volumes:
       - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      ports:
+      - 127.0.0.1:19080:19080
+      - 127.0.0.1:19090:19090
       mem_limit: 64m
       healthcheck:
         test: wget -qO- http://127.0.0.1:8080/healthz

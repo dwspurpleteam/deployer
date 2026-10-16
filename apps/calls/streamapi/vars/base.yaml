@@ -8,7 +8,7 @@ app:
     latency_buckets_seconds: [0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2]
     max_concurrent_streams: 512
     address: 0.0.0.0:19090
-    connections: 128
+    connections: 1024
     max_message_bytes: 65536
     write_buffer_bytes: 32768
     stream_window_bytes: 65536
@@ -92,9 +92,8 @@ compose:
         GOMEMLIMIT: 192MiB
       volumes:
         - ./configs/streamapi.yaml:/etc/streamapi.yaml:ro
-      ports:
-        - 127.0.0.1:19090:19090
-        - 127.0.0.1:19080:19080
+      deploy:
+        replicas: 2
       mem_limit: 256m
       stop_grace_period: 15s
       healthcheck:

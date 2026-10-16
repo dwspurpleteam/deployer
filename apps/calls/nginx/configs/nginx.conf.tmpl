@@ -5,12 +5,48 @@ map $http_upgrade $connection_upgrade {
 
 resolver {{ .Vars.app.resolver }} valid={{ .Vars.app.resolver_valid }} ipv6=off;
 
+map $http_x_call_id $streamapi_call_key {
+  '' $request_id;
+  default $http_x_call_id;
+}
+
 {{ range $name, $address := get .Vars.app "upstreams" }}
 upstream {{ $name }} {
   zone {{ $name }} 64k;
   server {{ $address }} resolve;
 }
 {{ end }}
+
+upstream streamapi_grpc {
+  zone streamapi_grpc 64k;
+  hash $streamapi_call_key;
+  server {{ .Vars.app.streamapi_grpc.upstream }} resolve;
+}
+
+server {
+  listen {{ .Vars.app.streamapi_http_listen }};
+  client_max_body_size {{ .Vars.app.max_body_size }};
+
+  location / {
+    proxy_pass http://streamapi;
+    proxy_http_version 1.1;
+    proxy_set_header Connection '';
+    proxy_read_timeout {{ .Vars.app.proxy_timeout }};
+  }
+}
+
+server {
+  listen {{ .Vars.app.streamapi_grpc.listen }};
+  http2 on;
+  http2_max_concurrent_streams {{ .Vars.app.streamapi_grpc.max_concurrent_streams }};
+
+  location / {
+    grpc_pass grpc://streamapi_grpc;
+    grpc_connect_timeout {{ .Vars.app.streamapi_grpc.connect_timeout }};
+    grpc_read_timeout {{ .Vars.app.streamapi_grpc.read_timeout }};
+    grpc_send_timeout {{ .Vars.app.streamapi_grpc.send_timeout }};
+  }
+}
 
 server {
   listen {{ .Vars.app.listen }};

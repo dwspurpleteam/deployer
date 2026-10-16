@@ -26,7 +26,7 @@ app:
     api_key: "mvpkey"
     urls:
     - http://meet:6080/livekit/webhook
-    - http://streamapi:19080/webhooks/livekit
+    - http://nginx:19080/webhooks/livekit
   openvidu:
     analytics:
       enabled: false
