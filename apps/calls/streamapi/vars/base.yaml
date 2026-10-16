@@ -1,6 +1,6 @@
 build:
   repository: https://github.com/dwspurpleteam/streamapi.git
-  tag: v1.0.0
+  tag: v1.1.0
 
 app:
   name: streamapi
@@ -37,7 +37,6 @@ app:
     egress_burst_bytes: 12500000
     queue_age: 1000ms
   events:
-    concurrency: 32
     publish_timeout: 1s
     delivery:
       max_subscriptions: 512
