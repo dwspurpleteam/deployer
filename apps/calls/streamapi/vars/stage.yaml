@@ -12,6 +12,5 @@ app:
 compose:
   services:
     streamapi:
-      ports:
-      - 127.0.0.1:29090:19090
-      - 127.0.0.1:29080:19080
+      deploy:
+        replicas: 1

@@ -12,6 +12,24 @@ upstream {{ $name }} {
 }
 {{ end }}
 
+{{ if .Vars.app.streamapi.enabled }}
+map $http_x_call_id $streamapi_call_key {
+  '' $request_id;
+  default $http_x_call_id;
+}
+
+upstream streamapi {
+  zone streamapi 64k;
+  server {{ .Vars.app.streamapi.http.upstream }} resolve;
+}
+
+upstream streamapi_grpc {
+  zone streamapi_grpc 64k;
+  hash {{ .Vars.app.streamapi.grpc.hash }};
+  server {{ .Vars.app.streamapi.grpc.upstream }} resolve;
+}
+{{ end }}
+
 server {
   listen {{ .Vars.app.listen }};
   client_max_body_size {{ .Vars.app.max_body_size }};
@@ -42,3 +60,40 @@ server {
 
   location / { return 503; }
 }
+
+{{ if .Vars.app.streamapi.enabled }}
+server {
+  listen {{ .Vars.app.streamapi.http.listen }};
+  client_max_body_size {{ $.Vars.app.max_body_size }};
+  proxy_http_version 1.1;
+  proxy_set_header Connection '';
+
+  location = /webhooks/livekit {
+    proxy_pass http://streamapi;
+    proxy_connect_timeout {{ .Vars.app.streamapi.http.webhook.connect_timeout }};
+    proxy_send_timeout {{ .Vars.app.streamapi.http.webhook.send_timeout }};
+    proxy_read_timeout {{ .Vars.app.streamapi.http.webhook.read_timeout }};
+    proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504 non_idempotent;
+    proxy_next_upstream_tries {{ .Vars.app.streamapi.http.webhook.attempts }};
+    proxy_next_upstream_timeout {{ .Vars.app.streamapi.http.webhook.retry_timeout }};
+  }
+
+  location / {
+    proxy_pass http://streamapi;
+    proxy_read_timeout {{ $.Vars.app.proxy_timeout }};
+  }
+}
+
+server {
+  listen {{ .Vars.app.streamapi.grpc.listen }};
+  http2 on;
+  http2_max_concurrent_streams {{ .Vars.app.streamapi.grpc.max_concurrent_streams }};
+
+  location / {
+    grpc_pass grpc://streamapi_grpc;
+    grpc_connect_timeout {{ .Vars.app.streamapi.grpc.connect_timeout }};
+    grpc_read_timeout {{ .Vars.app.streamapi.grpc.read_timeout }};
+    grpc_send_timeout {{ .Vars.app.streamapi.grpc.send_timeout }};
+  }
+}
+{{ end }}

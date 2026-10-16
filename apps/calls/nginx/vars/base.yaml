@@ -12,6 +12,25 @@ app:
   routes:
     /meet: meet
     /rtc: openvidu
+  streamapi:
+    enabled: true
+    http:
+      listen: 19080
+      upstream: streamapi:19080
+      webhook:
+        connect_timeout: 1s
+        send_timeout: 3s
+        read_timeout: 3s
+        retry_timeout: 5s
+        attempts: 2
+    grpc:
+      listen: 19090
+      upstream: streamapi:19090
+      hash: $streamapi_call_key
+      connect_timeout: 1s
+      read_timeout: 24h
+      send_timeout: 3600s
+      max_concurrent_streams: 512
 
 compose:
   services:
@@ -19,6 +38,9 @@ compose:
       image: nginx:1.28.2-alpine
       volumes:
       - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      ports:
+      - 127.0.0.1:19080:19080
+      - 127.0.0.1:19090:19090
       mem_limit: 64m
       healthcheck:
         test: wget -qO- http://127.0.0.1:8080/healthz
