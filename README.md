@@ -25,7 +25,7 @@ flowchart LR
     stage --> stage_openvidu[OpenVidu LiveKit]
     stage_meet --> stage_openvidu
     stage_openvidu -->|webhooks, s2s| stage
-    stage -->|webhooks / grpc| stage_streamapi["streamapi (1 replica)"]
+    stage -->|webhooks / grpc| stage_streamapi[streamapi]
     stage_openvidu -->|media| stage_streamapi
   end
 
@@ -34,7 +34,7 @@ flowchart LR
     proxy --> openvidu[OpenVidu LiveKit]
     meet --> openvidu
     openvidu -->|webhooks, s2s| proxy
-    proxy -->|webhooks / grpc| streamapi["streamapi (2 replicas)"]
+    proxy -->|webhooks / grpc| streamapi[streamapi]
     openvidu -->|media| streamapi
   end
 
