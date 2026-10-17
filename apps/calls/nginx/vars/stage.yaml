@@ -7,10 +7,3 @@ app:
       upstream: streamapi-stage:19080
     grpc:
       upstream: streamapi-stage:19090
-
-compose:
-  services:
-    nginx:
-      ports:
-      - 127.0.0.1:29080:19080
-      - 127.0.0.1:29090:19090
