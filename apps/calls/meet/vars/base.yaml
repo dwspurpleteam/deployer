@@ -1,6 +1,6 @@
 build:
   repository: https://github.com/dwspurpleteam/openvidu-meet.git
-  tag: v3.9.0
+  tag: b0f24e0a1f36eeae939073c5b8c2c81a217adbf7
 
 app:
   env:
