@@ -1,6 +1,6 @@
 build:
   repository: https://github.com/dwspurpleteam/openvidu-meet.git
-  tag: ffa0e2382b2d8f826063be7887f32720df395346
+  tag: apps/calls/meet/vars/base.yaml 
 
 app:
   env:
