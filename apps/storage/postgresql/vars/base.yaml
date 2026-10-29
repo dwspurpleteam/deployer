@@ -1,0 +1,55 @@
+app:
+  env:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: CHANGE_ME_ENCRYPTED
+    POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+
+  databases:
+  # плагин менеджер
+  - name: plugin_manager_stage
+    owner: plugin_manager_stage
+    password: CHANGE_ME_ENCRYPTED
+  - name: plugin_manager_base
+    owner: plugin_manager_base
+    password: CHANGE_ME_ENCRYPTED
+
+  # реестр плагинов
+  - name: plugin_registry_stage
+    owner: plugin_registry_stage
+    password: CHANGE_ME_ENCRYPTED
+  - name: plugin_registry_base
+    owner: plugin_registry_base
+    password: CHANGE_ME_ENCRYPTED
+
+compose:
+  services:
+    postgres:
+      image: postgres:17.7-alpine
+      env_file:
+      - ./configs/service.env
+      volumes:
+      - data:/var/lib/postgresql/data
+      mem_limit: 512m
+      shm_size: 128m
+      stop_grace_period: 30s
+      healthcheck:
+        test: pg_isready -U postgres -d postgres
+        interval: 10s
+        timeout: 5s
+        retries: 12
+
+    postgresql-databases:
+      image: postgres:17.7-alpine
+      restart: 'no'
+      entrypoint: /bin/sh
+      command: /config/databases.sh
+      env_file:
+      - ./configs/service.env
+      volumes:
+      - ./configs/databases.sh:/config/databases.sh:ro
+      depends_on:
+        postgres:
+          condition: service_healthy
+
+  volumes:
+    data: {}
