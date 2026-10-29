@@ -4,6 +4,103 @@ set -eu
 export PGPASSWORD="$POSTGRES_PASSWORD"
 
 {{ range .Vars.app.databases }}
+{{ if .migration }}
+psql \
+  --host postgres \
+  --username "$POSTGRES_USER" \
+  --dbname postgres \
+  --set ON_ERROR_STOP=1 \
+  --set database_name={{ quote .name }} \
+  --set database_owner="$POSTGRES_USER" \
+  --set migration_username={{ quote .migration.username }} \
+  --set migration_password={{ quote .migration.password }} \
+  --set runtime_username={{ quote .runtime.username }} \
+  --set runtime_password={{ quote .runtime.password }} <<'SQL'
+SELECT format(
+  'CREATE ROLE %I LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD %L',
+  :'migration_username', :'migration_password'
+)
+WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = :'migration_username')
+\gexec
+
+SELECT format(
+  'ALTER ROLE %I WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD %L',
+  :'migration_username', :'migration_password'
+)
+\gexec
+
+SELECT format(
+  'CREATE ROLE %I LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD %L',
+  :'runtime_username', :'runtime_password'
+)
+WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = :'runtime_username')
+\gexec
+
+SELECT format(
+  'ALTER ROLE %I WITH LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD %L',
+  :'runtime_username', :'runtime_password'
+)
+\gexec
+
+SELECT format('CREATE DATABASE %I OWNER %I', :'database_name', :'database_owner')
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = :'database_name')
+\gexec
+
+SELECT format('ALTER DATABASE %I OWNER TO %I', :'database_name', :'database_owner')
+\gexec
+
+SELECT format('REVOKE ALL ON DATABASE %I FROM PUBLIC', :'database_name')
+\gexec
+
+SELECT format(
+  'GRANT CONNECT ON DATABASE %I TO %I, %I',
+  :'database_name', :'migration_username', :'runtime_username'
+)
+\gexec
+SQL
+
+psql \
+  --host postgres \
+  --username "$POSTGRES_USER" \
+  --dbname={{ quote .name }} \
+  --set ON_ERROR_STOP=1 \
+  --set migration_username={{ quote .migration.username }} \
+  --set runtime_username={{ quote .runtime.username }} <<'SQL'
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+
+SELECT format('GRANT USAGE, CREATE ON SCHEMA public TO %I', :'migration_username')
+\gexec
+
+SELECT format('GRANT USAGE ON SCHEMA public TO %I', :'runtime_username')
+\gexec
+
+SELECT format(
+  'GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO %I',
+  :'runtime_username'
+)
+\gexec
+
+SELECT format(
+  'GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO %I',
+  :'runtime_username'
+)
+\gexec
+
+SELECT format(
+  'ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA public '
+  'GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO %I',
+  :'migration_username', :'runtime_username'
+)
+\gexec
+
+SELECT format(
+  'ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA public '
+  'GRANT USAGE, SELECT ON SEQUENCES TO %I',
+  :'migration_username', :'runtime_username'
+)
+\gexec
+SQL
+{{ else }}
 psql \
   --host postgres \
   --username "$POSTGRES_USER" \
@@ -26,4 +123,5 @@ WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = :'database_name')
 SELECT format('ALTER DATABASE %I OWNER TO %I', :'database_name', :'role_name')
 \gexec
 SQL
+{{ end }}
 {{ end }}

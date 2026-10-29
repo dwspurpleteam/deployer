@@ -7,11 +7,19 @@ app:
   databases:
   # плагин менеджер
   - name: plugin_manager_stage
-    owner: plugin_manager_stage
-    password: CHANGE_ME_ENCRYPTED
+    migration:
+      username: plugin_manager_stage_migration
+      password: CHANGE_ME_ENCRYPTED
+    runtime:
+      username: plugin_manager_stage_app
+      password: CHANGE_ME_ENCRYPTED
   - name: plugin_manager_base
-    owner: plugin_manager_base
-    password: CHANGE_ME_ENCRYPTED
+    migration:
+      username: plugin_manager_base_migration
+      password: CHANGE_ME_ENCRYPTED
+    runtime:
+      username: plugin_manager_base_app
+      password: CHANGE_ME_ENCRYPTED
 
   # реестр плагинов
   - name: plugin_registry_stage
