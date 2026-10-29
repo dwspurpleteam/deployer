@@ -1,0 +1,37 @@
+app:
+  frontend:
+    package: '@dwspurpleteam/simple-plugin-registry-frontend'
+    version: 0.1.0
+
+  env:
+    DB_URL: jdbc:postgresql://postgres:5432/plugin_registry_base
+    DB_USERNAME: plugin_registry_base
+    DB_PASSWORD: CHANGE_ME_ENCRYPTED
+    SERVER_PORT: '8080'
+
+compose:
+  services:
+    pluginregistry:
+      image: ghcr.io/dwspurpleteam/simple-plugin-registry:sha-8efe1f6
+      env_file:
+      - ./configs/service.env
+      mem_limit: 512m
+      stop_grace_period: 30s
+      healthcheck:
+        test: wget -qO- http://127.0.0.1:8080/health
+        interval: 10s
+        timeout: 5s
+        retries: 12
+
+    pluginregistry-web:
+      volumes:
+      - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      mem_limit: 64m
+      depends_on:
+        pluginregistry:
+          condition: service_healthy
+      healthcheck:
+        test: wget -qO- http://127.0.0.1:8080/healthz
+        interval: 10s
+        timeout: 5s
+        retries: 12

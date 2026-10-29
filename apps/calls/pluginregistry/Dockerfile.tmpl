@@ -1,0 +1,15 @@
+FROM node:24.15.0-alpine AS frontend
+
+WORKDIR /build
+
+RUN npm config set @dwspurpleteam:registry https://npm.pkg.github.com \
+    && npm install --ignore-scripts --no-audit --no-fund \
+        {{ quote (printf "%s@%s" .Vars.app.frontend.package .Vars.app.frontend.version) }}
+
+FROM nginx:1.28.2-alpine
+
+COPY --from=frontend \
+    /build/node_modules/{{ .Vars.app.frontend.package }}/dist/ \
+    /usr/share/nginx/html/
+
+EXPOSE 8080

@@ -5,7 +5,7 @@ app:
     DB_PASSWORD: CHANGE_ME_ENCRYPTED
     DB_MIGRATION_USERNAME: plugin_manager_stage_migration
     DB_MIGRATION_PASSWORD: CHANGE_ME_ENCRYPTED
-    PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry-stage:8090
+    PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry-stage:8080
 
 compose:
   services:

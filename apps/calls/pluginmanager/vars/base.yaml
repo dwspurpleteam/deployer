@@ -17,7 +17,7 @@ app:
     GRPC_HOST: 0.0.0.0
     GRPC_PORT: '9000'
     GRPC_PLAIN_TEXT: 'true'
-    PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry:8090
+    PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry:8080
 
 compose:
   services:
