@@ -1,0 +1,34 @@
+app:
+  env:
+    DB_HOST: postgres
+    DB_PORT: '5432'
+    DB_NAME: plugin_manager_base
+    DB_USERNAME: plugin_manager_base_app
+    DB_PASSWORD: CHANGE_ME_ENCRYPTED
+    DB_MIGRATION_USERNAME: plugin_manager_base_migration
+    DB_MIGRATION_PASSWORD: CHANGE_ME_ENCRYPTED
+    DB_POOL_INITIAL_SIZE: '0'
+    DB_POOL_MAX_SIZE: '20'
+    DB_POOL_MAX_IDLE_TIME: PT30M
+    DB_POOL_MAX_ACQUIRE_TIME: PT10S
+    DB_POOL_MAX_CREATE_CONNECTION_TIME: PT10S
+    DB_POOL_VALIDATION_QUERY: SELECT 1
+    DB_MIGRATION_POOL_MAX_SIZE: '2'
+    GRPC_HOST: 0.0.0.0
+    GRPC_PORT: '9000'
+    GRPC_PLAIN_TEXT: 'true'
+    PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry:8080
+
+compose:
+  services:
+    pluginmanager:
+      image: ghcr.io/dwspurpleteam/plugin-manage-service:sha-a0de405
+      env_file:
+      - ./configs/service.env
+      mem_limit: 512m
+      stop_grace_period: 30s
+      healthcheck:
+        test: curl -fsS http://127.0.0.1:8080/q/openapi
+        interval: 10s
+        timeout: 5s
+        retries: 12

@@ -1,0 +1,12 @@
+app:
+  env:
+    DB_URL: jdbc:postgresql://postgres:5432/plugin_registry_stage
+    DB_USERNAME: plugin_registry_stage
+    DB_PASSWORD: CHANGE_ME_ENCRYPTED
+
+compose:
+  services:
+    pluginregistry:
+      mem_limit: 256m
+    pluginregistry-web:
+      mem_limit: 32m
