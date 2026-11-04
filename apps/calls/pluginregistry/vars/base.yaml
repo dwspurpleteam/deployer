@@ -7,7 +7,6 @@ app:
     DB_URL: jdbc:postgresql://postgres:5432/plugin_registry
     DB_USERNAME: plugin_registry
     DB_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPcnU2akk4RUczRS9DdUxjMUtDcjVxR0F4K0JCa2pxNTd1UkI3THVMMng4ClcwWnJORlN5MlpDTnpKYXFtczdPSnJaUTc2czNrdk4vc2lFN1ZqekVNcTQKLS0tIG45V3NRakIyMGVjTjRrL3ZiZ1FMSVhqSmVNSlU4Rk91SXZlekVRZnNJYTAKro8XISK06guAm+e2VwcfHD6B2GUsnRPi0cGJfVKcayG+T/ETotVWWQhiOjyiOrnekYOJes8AjCDe9zrDS8VNwjfFL3pmPkZNLYyM]
-    SERVER_PORT: '8080'
     SPRING_FLYWAY_ENABLED: 'false'
 
 compose:
