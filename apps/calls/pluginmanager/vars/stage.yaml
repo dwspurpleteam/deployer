@@ -1,8 +1,3 @@
 app:
   env:
     PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry-stage:8080
-
-compose:
-  services:
-    pluginmanager:
-      mem_limit: 256m
