@@ -1,5 +1,10 @@
+build:
+  repository: https://github.com/dwspurpleteam/plugin-manager-service.git
+  tag: 194391dea01c44cb6309e3a546e2ff6de73eca6b
+
 app:
   env:
+    REDIS_URL: CHANGE_ME_ENCRYPTED
     DB_HOST: postgres
     DB_PORT: '5432'
     DB_NAME: plugin_manager_base
@@ -23,7 +28,6 @@ app:
 compose:
   services:
     pluginmanager:
-      image: ghcr.io/dwspurpleteam/plugin-manage-service:sha-a0de405
       env_file:
       - ./configs/service.env
       mem_limit: 512m
