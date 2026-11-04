@@ -1,6 +1,6 @@
 build:
   repository: https://github.com/dwspurpleteam/openvidu-meet.git
-  tag: v3.9.0
+  tag: 55769a8f4403d31bec7b2ebad61c42fa9866cfb6  
 
 app:
   env:
@@ -34,6 +34,7 @@ app:
     MEET_S3_SECRET_KEY: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZHJKYjErUDkxMm0xOEtHNUJMMFpIVklrZU83TUZrdTFaY2RqTHFRNno0ClliQVZXK2hYTDI1WHZPbjdzWDBjWFhUTFBIZk5hTnJDbGFUQXdrMVNPdm8KLS0tIEV4OG1FRWNESXFaaVVZUWM2QVRSSjNhUTlLWHVRNmF4MFVSMHBMVDE2KzAKR2iTaDzYbhvrFGnMlyS0blk8X9jAnqxp8hqOO5yFZYsljQp8HeKVfE08cdFr13WvXlD6MnjV9s+uAzELUwf5ubUTWwLwvHECIioeq5EdBP8=]
     MEET_AWS_REGION: us-east-1
     MEET_S3_WITH_PATH_STYLE_ACCESS: 'true'
+    MEET_PLUGINS: '[{"id":"attendance","title":"Посещаемость","url":"https://decisively-relaxed-firebrat.cloudpub.ru/"}]'
 
 compose:
   services:

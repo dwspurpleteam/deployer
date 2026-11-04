@@ -2,8 +2,18 @@ app:
   upstreams:
     meet: meet-stage:6080
     openvidu: openvidu-stage:7880
+    pluginmanager: pluginmanager-stage:8080
+    pluginregistry: pluginregistry-stage:8080
   streamapi:
     http:
       upstream: streamapi-stage:19080
     grpc:
       upstream: streamapi-stage:19090
+
+compose:
+  services:
+    nginx:
+      volumes:
+      - ./configs/main.conf:/etc/nginx/nginx.conf:ro
+      - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /srv/dwspurpleteam/static/stage:/usr/share/nginx/pluginregistry:ro

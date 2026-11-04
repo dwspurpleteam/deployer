@@ -26,6 +26,8 @@ flowchart LR
     stage_meet --> stage_openvidu
     stage_openvidu -->|webhooks, s2s| stage
     stage -->|webhooks / grpc| stage_streamapi[streamapi]
+    stage --> stage_registry[Plugin Registry]
+    stage_manager[Plugin Manager] --> stage_registry
     stage_openvidu -->|media| stage_streamapi
   end
 
@@ -35,6 +37,8 @@ flowchart LR
     meet --> openvidu
     openvidu -->|webhooks, s2s| proxy
     proxy -->|webhooks / grpc| streamapi[streamapi]
+    proxy --> registry[Plugin Registry]
+    manager[Plugin Manager] --> registry
     openvidu -->|media| streamapi
   end
 
@@ -43,6 +47,7 @@ flowchart LR
     redis[Redis]
     minio[MinIO]
     nats["NATS JetStream"]
+    postgres[PostgreSQL]
   end
 
   meet --> mongodb
@@ -54,6 +59,10 @@ flowchart LR
   openvidu --> redis
   streamapi <-->|events| nats
   stage_streamapi <-->|events| nats
+  registry --> postgres
+  stage_registry --> postgres
+  manager --> postgres
+  stage_manager --> postgres
 ```
 
 Разработчики плагинов подключаются к grpc по TLS через `calls.vareonix.cc:443`; ingress проксирует подписки на медиа и события в nginx выбранного окружения. Webhooks для streamapi и служебные HTTP-ручки доступны только внутри инфраструктуры. Подписки одного звонка направляются по `x-call-id` на одну реплику. После обрыва grpc stream клиент подписывается заново
