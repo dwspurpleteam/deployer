@@ -1,9 +1,12 @@
 build:
   repository: https://github.com/dwspurpleteam/streamapi.git
-  tag: v1.1.0
+  tag: b1afa0343173f849907b58a30c3fe18a1b456c0a
 
 app:
   name: streamapi
+  actions:
+    manager_url: http://pluginmanager:8080
+    token: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4Tmg1akJoOGFaK0dSaXJ1andNZlZ1K0J6SityTy9nc29mRm9hUzA2em5nClhSK0tjY0FMS0tob3pYYXlJQ3F4YTJzUndxSnFZNzFPS1pPbXoxWjJxdk0KLS0tIDBCRENYckYwL3hHdzJOZzNUYmJoUFZzZFovWmlHMkRhODJCTDN6TWJWM0UKhHQbqF5hKRgcecMMFS5xVj91oFccpze/6ViEhWMHRdXJgBWuXe2quV5ZGrS4tIwFbTthGhESpzbOhGkw10jp+HmKbLmYI34FHt8e]
   grpc:
     latency_buckets_seconds: [0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2]
     max_concurrent_streams: 512
