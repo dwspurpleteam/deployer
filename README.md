@@ -75,7 +75,7 @@ flowchart LR
 
 ## Реестр плагинов
 
-Реестр доступен по пути `/plugins`, API — по `/v1/`. В stage используется та же cookie, что и для звонков. Статику отдаёт nginx окружения из `/srv/dwspurpleteam/static/stage` или `/srv/dwspurpleteam/static/prod` на сервере. Роль Ansible `frontend` устанавливает `rsync` и создаёт директории с доступом на запись для `autobot` и на чтение для nginx; примените её до запуска nginx.
+Реестр доступен по пути `/plugins`, API — по `/v1/`. В stage используется та же cookie, что и для звонков. Статику отдаёт nginx окружения из `/srv/dwspurpleteam/static/stage` или `/srv/dwspurpleteam/static/prod` на сервере. До запуска nginx установите `rsync` и создайте обе директории: они должны быть доступны на запись пользователю доставки и на чтение nginx.
 
 Workflow в репозитории `plugin-registry` собирает frontend при каждом push; ветка `dev` доставляет его на stage, `main` — на prod. Сейчас основная ветка репозитория называется `master`: перед включением доставки необходимо создать ветки `dev` и `main` и согласовать переход на них. В GitHub Environments `stage` и `prod` задайте secrets `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` и `DEPLOY_KNOWN_HOSTS`. Ключ должен иметь доступ только к нужной директории; `DEPLOY_KNOWN_HOSTS` содержит проверенный SSH host key сервера. Установите `rsync` на сервере. Сборка и деплой backend управляются отдельно через Composer.
 

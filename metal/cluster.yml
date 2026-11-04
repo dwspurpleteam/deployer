@@ -27,6 +27,3 @@
 
     - role: docker
       tags: docker
-
-    - role: frontend
-      tags: frontend
