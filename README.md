@@ -63,3 +63,11 @@ flowchart LR
 Откройте [звонки](https://calls.vareonix.cc/meet/) и выполните в консоли браузера `document.cookie = "composer_stage=<secret>:stage; Path=/; Secure; SameSite=Lax"; location.reload();`. Секрет запросите у ответственного за инфраструктуру: это расшифрованное значение `app.stage_token` из [конфига ingress](apps/ingress/nginx/vars/base.yaml)
 
 Для grpc на stage передавайте metadata `cookie: composer_stage=<secret>:stage`; без нее запросы идут в prod. Для привязки подписок передавайте `x-call-id` со значением `call_id` запроса
+
+## Реестр плагинов
+
+Реестр доступен по пути `/plugins`, API — по `/v1/`. В stage используется та же cookie, что и для звонков. Статику отдаёт nginx окружения из `/srv/dwspurpleteam/static/stage` или `/srv/dwspurpleteam/static/prod` на сервере. Подготовьте обе директории до запуска nginx: файлы должны быть доступны nginx на чтение, а пользователю доставки — на запись.
+
+Workflow в репозитории `plugin-registry` собирает frontend при каждом push; ветка `dev` доставляет его на stage, `main` — на prod. Сейчас основная ветка репозитория называется `master`: перед включением доставки необходимо создать ветки `dev` и `main` и согласовать переход на них. В GitHub Environments `stage` и `prod` задайте secrets `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` и `DEPLOY_KNOWN_HOSTS`. Ключ должен иметь доступ только к нужной директории; `DEPLOY_KNOWN_HOSTS` содержит проверенный SSH host key сервера. Установите `rsync` на сервере. Сборка и деплой backend управляются отдельно через Composer.
+
+Для stage и prod запускаются отдельные PostgreSQL. Каждый запускается без создания пользовательских баз и ролей. Перед запуском сервисов разработчик создаёт базы, роли и права для каждого окружения, применяет миграции из соответствующих репозиториев и заполняет зашифрованные пароли в vars. Автоматический запуск Flyway у сервисов отключён. Проверяйте совместимость схемы при каждом обновлении backend.

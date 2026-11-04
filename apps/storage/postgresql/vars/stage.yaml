@@ -1,0 +1,3 @@
+app:
+  env:
+    POSTGRES_PASSWORD: CHANGE_ME_ENCRYPTED

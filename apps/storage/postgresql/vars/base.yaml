@@ -1,0 +1,25 @@
+app:
+  env:
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: CHANGE_ME_ENCRYPTED
+    POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+
+compose:
+  services:
+    postgres:
+      image: postgres:17.7-alpine
+      env_file:
+      - ./configs/service.env
+      volumes:
+      - data:/var/lib/postgresql/data
+      mem_limit: 512m
+      shm_size: 128m
+      stop_grace_period: 30s
+      healthcheck:
+        test: pg_isready -U postgres -d postgres
+        interval: 10s
+        timeout: 5s
+        retries: 12
+
+  volumes:
+    data: {}
