@@ -1,6 +1,6 @@
 build:
   repository: https://github.com/dwspurpleteam/plugin-manager-service.git
-  tag: a7be2048e17365c39b11210337496c9e2eded57b
+  tag: 25b449aeae45c8a5beb6fd56294083bbd823af8a
 
 app:
   env:
