@@ -26,8 +26,9 @@ flowchart LR
     stage_meet --> stage_openvidu
     stage_openvidu -->|webhooks, s2s| stage
     stage -->|webhooks / grpc| stage_streamapi[streamapi]
+    stage --> stage_manager[Plugin Manager]
     stage --> stage_registry[Plugin Registry]
-    stage_manager[Plugin Manager] --> stage_registry
+    stage_manager --> stage_registry
     stage_openvidu -->|media| stage_streamapi
   end
 
@@ -37,8 +38,9 @@ flowchart LR
     meet --> openvidu
     openvidu -->|webhooks, s2s| proxy
     proxy -->|webhooks / grpc| streamapi[streamapi]
+    proxy --> manager[Plugin Manager]
     proxy --> registry[Plugin Registry]
-    manager[Plugin Manager] --> registry
+    manager --> registry
     openvidu -->|media| streamapi
   end
 
@@ -57,6 +59,8 @@ flowchart LR
   stage_meet --> redis
   stage_meet --> minio
   openvidu --> redis
+  manager --> redis
+  stage_manager --> redis
   streamapi <-->|events| nats
   stage_streamapi <-->|events| nats
   registry --> postgres
