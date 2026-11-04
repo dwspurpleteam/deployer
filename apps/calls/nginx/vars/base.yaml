@@ -11,6 +11,7 @@ app:
   upstreams:
     meet: meet:6080
     openvidu: openvidu:7880
+    pluginmanager: pluginmanager:8080
     pluginregistry: pluginregistry:8080
   routes:
     /meet: meet

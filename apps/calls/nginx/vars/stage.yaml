@@ -2,6 +2,7 @@ app:
   upstreams:
     meet: meet-stage:6080
     openvidu: openvidu-stage:7880
+    pluginmanager: pluginmanager-stage:8080
     pluginregistry: pluginregistry-stage:8080
   streamapi:
     http:
