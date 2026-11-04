@@ -1,9 +1,3 @@
-app:
-  env:
-    DB_URL: jdbc:postgresql://postgres-stage:5432/plugin_registry_stage
-    DB_USERNAME: plugin_registry_stage
-    DB_PASSWORD: CHANGE_ME_ENCRYPTED
-
 compose:
   services:
     pluginregistry:

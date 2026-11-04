@@ -26,6 +26,8 @@ flowchart LR
     stage_meet --> stage_openvidu
     stage_openvidu -->|webhooks, s2s| stage
     stage -->|webhooks / grpc| stage_streamapi[streamapi]
+    stage --> stage_registry[Plugin Registry]
+    stage_manager[Plugin Manager] --> stage_registry
     stage_openvidu -->|media| stage_streamapi
   end
 
@@ -35,6 +37,8 @@ flowchart LR
     meet --> openvidu
     openvidu -->|webhooks, s2s| proxy
     proxy -->|webhooks / grpc| streamapi[streamapi]
+    proxy --> registry[Plugin Registry]
+    manager[Plugin Manager] --> registry
     openvidu -->|media| streamapi
   end
 
@@ -43,6 +47,7 @@ flowchart LR
     redis[Redis]
     minio[MinIO]
     nats["NATS JetStream"]
+    postgres[PostgreSQL]
   end
 
   meet --> mongodb
@@ -54,6 +59,10 @@ flowchart LR
   openvidu --> redis
   streamapi <-->|events| nats
   stage_streamapi <-->|events| nats
+  registry --> postgres
+  stage_registry --> postgres
+  manager --> postgres
+  stage_manager --> postgres
 ```
 
 Разработчики плагинов подключаются к grpc по TLS через `calls.vareonix.cc:443`; ingress проксирует подписки на медиа и события в nginx выбранного окружения. Webhooks для streamapi и служебные HTTP-ручки доступны только внутри инфраструктуры. Подписки одного звонка направляются по `x-call-id` на одну реплику. После обрыва grpc stream клиент подписывается заново
@@ -70,4 +79,4 @@ flowchart LR
 
 Workflow в репозитории `plugin-registry` собирает frontend при каждом push; ветка `dev` доставляет его на stage, `main` — на prod. Сейчас основная ветка репозитория называется `master`: перед включением доставки необходимо создать ветки `dev` и `main` и согласовать переход на них. В GitHub Environments `stage` и `prod` задайте secrets `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` и `DEPLOY_KNOWN_HOSTS`. Ключ должен иметь доступ только к нужной директории; `DEPLOY_KNOWN_HOSTS` содержит проверенный SSH host key сервера. Установите `rsync` на сервере. Сборка и деплой backend управляются отдельно через Composer.
 
-Для stage и prod запускаются отдельные PostgreSQL. Каждый запускается без создания пользовательских баз и ролей. Перед запуском сервисов разработчик создаёт базы, роли и права для каждого окружения, применяет миграции из соответствующих репозиториев и заполняет зашифрованные пароли в vars. Автоматический запуск Flyway у сервисов отключён. Проверяйте совместимость схемы при каждом обновлении backend.
+Stage и prod используют общий PostgreSQL и одни и те же базы соответствующих сервисов. PostgreSQL развёртывается только в prod, как и остальные общие хранилища; до его появления в prod сервисам stage потребуется доступный общий PostgreSQL. Пользовательские базы и роли автоматически не создаются: перед запуском сервисов разработчик создаёт их вручную, назначает права, применяет миграции из соответствующих репозиториев и заполняет зашифрованные пароли в vars. Автоматический запуск Flyway у сервисов отключён. Проверяйте совместимость схемы при каждом обновлении backend.
