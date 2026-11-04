@@ -11,6 +11,8 @@ app:
   upstreams:
     meet: meet:6080
     openvidu: openvidu:7880
+    pluginmanager: pluginmanager:8080
+    pluginregistry: pluginregistry:8080
   routes:
     /meet: meet
     /rtc: openvidu
@@ -43,6 +45,7 @@ compose:
       volumes:
       - ./configs/main.conf:/etc/nginx/nginx.conf:ro
       - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - /srv/dwspurpleteam/static/prod:/usr/share/nginx/pluginregistry:ro
       mem_limit: 64m
       ulimits:
         nofile:

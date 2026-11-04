@@ -1,0 +1,28 @@
+build:
+  repository: https://github.com/dwspurpleteam/plugin-manager-service.git
+  tag: 25b449aeae45c8a5beb6fd56294083bbd823af8a
+
+app:
+  env:
+    REDIS_URL: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBteDFXWmo3TmgvUGpFOTZWTWRVN3ZnRVQ1VlFQYnVxaHNjcit2cldwWFM0ClhRYzhZeEowZUNOZHlvdGRwWnpVL3J6RDB6MmNHMVFsMHVOQnoxUGMvMVUKLS0tIDJaelhSNHI5VGtlRGNwMWJ3UDdydE9XS2JrdTdMcEFWZGlFd3oycnoyZjgKlsmmi25Au7RUTlm/Zpb4a4KooHO6CXANAulKjhpLgGjJbItJd2YIZdX5OSKOVUqzrLqmPwtHj6U+frr/ki7nq/jfFQpe9KAAn/oTFXbBQJdQUjlhMPSiunHJaYOk7Bjtt6krhg==]
+    DB_HOST: postgres
+    DB_NAME: plugin_manager
+    DB_USERNAME: plugin_manager
+    DB_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBkVTYvS0I2dFh4NHNMdmxJR0pHRWg1ZG5TUDBTdFhzSUV1MXBncHRnSndjCnB1LzVFWWI3dWc2ZHhDWU8vTVlxcEVlMXVnTWhCNEkrTGJjRHVMQzVML0UKLS0tIGc5bkpJTmh5UGw1bjZmME1OUVpzYk5maXNCanl5eGYrMEpHL28xb3JBN0kKzc6pSIXQ5Fr7t5GKCjESKM8lv/5FrwspnjtHS7XaHyz119+CNaT60l5QBoWUPYnqZsoUQ8wJlqMD0tfyRfFwflxqSoHvhwPuBkJK]
+    DB_MIGRATION_USERNAME: plugin_manager_migration
+    DB_MIGRATION_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0TXFkK1lGaHRlSzR3OS9hL1BNeWlXeWpJejdwdTVKS0JzYmdOSEcwN21BCjVlcjBJM05BOTdYbm9zQ2prOEcwczV4RmtkQW12MnJ6VDQzcVRpM1FFeG8KLS0tIERJcnN5V3lHekh2TDVlWlpoRDkyUWc5d2VadEZwcTBrSUpmQkRqeFRpdU0KYGAj+Jdh3ycvcVk3V2bVgpUWV76iyqkYyY3SNHkSUmZ0CcnAkJ0cEaxI8wuFreXkInSWb2CFY1pnr+OLfilalz9XqvfU3UMov9L6]
+    QUARKUS_FLYWAY_MIGRATION_MIGRATE_AT_START: 'false'
+    PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry:8080
+
+compose:
+  services:
+    pluginmanager:
+      env_file:
+      - ./configs/service.env
+      mem_limit: 512m
+      stop_grace_period: 30s
+      healthcheck:
+        test: curl -fsS http://127.0.0.1:8080/q/openapi
+        interval: 10s
+        timeout: 5s
+        retries: 12

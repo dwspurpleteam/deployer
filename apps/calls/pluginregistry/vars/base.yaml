@@ -1,0 +1,23 @@
+build:
+  repository: https://github.com/dwspurpleteam/plugin-registry.git
+  tag: 8efe1f63156de91c778db1d3b5a9d51e0314758d
+
+app:
+  env:
+    DB_URL: jdbc:postgresql://postgres:5432/plugin_registry
+    DB_USERNAME: plugin_registry
+    DB_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBPcnU2akk4RUczRS9DdUxjMUtDcjVxR0F4K0JCa2pxNTd1UkI3THVMMng4ClcwWnJORlN5MlpDTnpKYXFtczdPSnJaUTc2czNrdk4vc2lFN1ZqekVNcTQKLS0tIG45V3NRakIyMGVjTjRrL3ZiZ1FMSVhqSmVNSlU4Rk91SXZlekVRZnNJYTAKro8XISK06guAm+e2VwcfHD6B2GUsnRPi0cGJfVKcayG+T/ETotVWWQhiOjyiOrnekYOJes8AjCDe9zrDS8VNwjfFL3pmPkZNLYyM]
+    SPRING_FLYWAY_ENABLED: 'false'
+
+compose:
+  services:
+    pluginregistry:
+      env_file:
+      - ./configs/service.env
+      mem_limit: 512m
+      stop_grace_period: 30s
+      healthcheck:
+        test: wget -qO- http://127.0.0.1:8080/health
+        interval: 10s
+        timeout: 5s
+        retries: 12
