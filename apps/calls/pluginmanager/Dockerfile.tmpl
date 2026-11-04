@@ -13,7 +13,9 @@ RUN git clone {{ quote .Vars.build.repository }} . \
 RUN su postgres -s /bin/sh -c 'initdb -D /tmp/jooq-postgres -A trust -U postgres' \
     && su postgres -s /bin/sh -c 'pg_ctl -D /tmp/jooq-postgres -l /tmp/jooq-postgres.log -o "-h 127.0.0.1" start' \
     && createdb -h 127.0.0.1 -U postgres plugin_manager_build \
-    && JOOQ_JDBC_URL=jdbc:postgresql://127.0.0.1:5432/plugin_manager_build ./gradlew assemble --no-daemon \
+    && JOOQ_JDBC_URL=jdbc:postgresql://127.0.0.1:5432/plugin_manager_build ./gradlew assemble --no-daemon --max-workers=1 \
+        -Dorg.gradle.jvmargs="-Xmx768m -XX:MaxMetaspaceSize=384m" \
+        -Pkotlin.compiler.execution.strategy=in-process \
     && su postgres -s /bin/sh -c 'pg_ctl -D /tmp/jooq-postgres stop'
 
 FROM eclipse-temurin:21-jre
