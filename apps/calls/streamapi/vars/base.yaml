@@ -1,6 +1,6 @@
 build:
   repository: https://github.com/dwspurpleteam/streamapi.git
-  tag: 958bd6697b140f125e372af436375e59c9583fda
+  tag: 184e0a33a9b1c60c7add02e707e2913491b3684f
 
 app:
   name: streamapi
