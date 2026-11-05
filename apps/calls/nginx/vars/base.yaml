@@ -13,6 +13,7 @@ app:
     openvidu: openvidu:7880
     pluginmanager: pluginmanager:8080
     pluginregistry: pluginregistry:8080
+    attendance: attendance:8081
   routes:
     /meet: meet
     /rtc: openvidu
