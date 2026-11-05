@@ -1,7 +1,5 @@
 app:
   name: streamapi-stage
-  actions:
-    manager_url: http://pluginmanager-stage:8080
   livekit:
     api_key: stage532910cf053299bb53b91806
     api_secret: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAxWnRjUFdhejdNSjJUVXNyRDNGSXV4THFhdjFPWVhBc3c5MVpjbEt2NVhRClRoUlllM241b2ZRbDh4TTBYWU1BdytEdWl0NXhwN1pEOERyVElIYzhwOFEKLS0tIFU0Mm5SaDVuQkFaV0V5ZUNKM0lFZWxtM040NHFPQlFVbkp6eHJCekZtZWcKKGWyQRhAp2MWj71h6Nks/4PKdO683dOkcDKSN44q8tswbl8dtHdE3L5AwBNPKC29ZJDIbP7QTFzz/4JdD8oolAkgZW8eNTxFg7pK9F159eAhKvYzNqFzQUFl0tzZlPzv]
