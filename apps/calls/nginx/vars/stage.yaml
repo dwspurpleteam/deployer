@@ -4,6 +4,7 @@ app:
     openvidu: openvidu-stage:7880
     pluginmanager: pluginmanager-stage:8080
     pluginregistry: pluginregistry-stage:8080
+    attendance: attendance-stage:8081
   streamapi:
     http:
       upstream: streamapi-stage:19080

@@ -1,0 +1,26 @@
+build:
+  repository: https://github.com/dwspurpleteam/plugins.git
+  tag: 5132cf88a9d6513f93d92229b09cc03552e96419
+
+app:
+  env:
+    ATTENDANCE_SOURCE: streamapi
+    ATTENDANCE_STREAMAPI_TARGET: nginx:19090
+    ATTENDANCE_STREAMAPI_PLAINTEXT: 'true'
+    JAVA_TOOL_OPTIONS: '-XX:MaxRAMPercentage=70.0'
+
+compose:
+  services:
+    attendance:
+      env_file:
+      - ./configs/service.env
+      mem_limit: 384m
+      stop_grace_period: 30s
+      deploy:
+        replicas: 1
+      healthcheck:
+        test: wget -qO- http://127.0.0.1:8081/actuator/health
+        interval: 10s
+        timeout: 5s
+        retries: 12
+        start_period: 60s
