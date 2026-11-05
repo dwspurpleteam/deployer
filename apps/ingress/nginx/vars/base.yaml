@@ -21,7 +21,6 @@ app:
       routes:
       - /streamapi.v1.MediaService/Subscribe
       - /streamapi.v1.EventService/Subscribe
-      - /streamapi.v1.ActionService/MuteMicrophone
       - /streamapi.v1.ActionService/SendEvent
       connect_timeout: 1s
       read_timeout: 24h
