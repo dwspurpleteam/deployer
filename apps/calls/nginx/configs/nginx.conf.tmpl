@@ -82,7 +82,7 @@ server {
   location = /plugins { try_files /index.html =404; root /usr/share/nginx/pluginregistry; }
   location ^~ /plugins/ { try_files /index.html =404; root /usr/share/nginx/pluginregistry; }
 
-  location / { return 503; }
+  location / { return 404; }
 }
 
 {{ if .Vars.app.streamapi.enabled }}
