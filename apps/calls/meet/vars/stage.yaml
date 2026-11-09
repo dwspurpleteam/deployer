@@ -6,8 +6,6 @@ app:
     MEET_REDIS_DB: '1'
 
 compose:
-  x-composer:
-    enabled: false
   services:
     meet:
       mem_limit: 256m
