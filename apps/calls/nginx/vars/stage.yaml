@@ -11,6 +11,8 @@ app:
       upstream: streamapi-stage:19090
 
 compose:
+  x-composer:
+    enabled: false
   services:
     nginx:
       volumes:

@@ -10,6 +10,8 @@ app:
     prefix: streamapi.stage.v1
 
 compose:
+  x-composer:
+    enabled: false
   services:
     streamapi:
       deploy:
