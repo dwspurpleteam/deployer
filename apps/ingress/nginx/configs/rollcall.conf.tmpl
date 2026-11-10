@@ -1,0 +1,43 @@
+server {
+  listen {{ .Vars.app.http_port }};
+  server_name rollcall.vareonix.cc;
+
+  location /.well-known/acme-challenge/ {
+    root /var/www/letsencrypt;
+  }
+
+  location / {
+    return 308 https://rollcall.vareonix.cc$request_uri;
+  }
+}
+
+server {
+  listen {{ .Vars.app.https_port }} ssl;
+  http2 on;
+  server_name rollcall.vareonix.cc;
+
+  ssl_certificate /etc/letsencrypt/live/rollcall/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/rollcall/privkey.pem;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  client_max_body_size 1m;
+  root /srv/rollcall;
+  error_page 413 = @too_large;
+
+  location @too_large {
+    default_type application/json;
+    return 413 '{"error":{"code":"request_too_large","message":"request body is too large"}}';
+  }
+
+  location /api/ {
+    set $rollcall_backend rollcall-api:8080;
+    proxy_pass http://$rollcall_backend$request_uri;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header X-Forwarded-For $remote_addr;
+  }
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+}
+

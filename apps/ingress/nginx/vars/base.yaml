@@ -39,8 +39,10 @@ compose:
       volumes:
       - ./configs/main.conf:/etc/nginx/nginx.conf:ro
       - ./configs/nginx.conf:/etc/nginx/user_conf.d/nginx.conf:ro
+      - ./configs/rollcall.conf:/etc/nginx/user_conf.d/rollcall.conf:ro
       - ./configs/redirector.conf:/etc/nginx/conf.d/redirector.conf:ro
       - letsencrypt:/etc/letsencrypt
+      - /home/daniil.mironenko/rollcall/frontend:/srv/rollcall:ro
       mem_limit: 256m
       ulimits:
         nofile:
