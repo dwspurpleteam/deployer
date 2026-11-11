@@ -35,7 +35,7 @@ upstream streamapi_grpc {
 server {
   listen {{ .Vars.app.listen }};
   client_max_body_size {{ .Vars.app.max_body_size }};
-  add_header X-Composer-Environment {{ quote .Env }} always;
+  add_header X-GitSail-Environment {{ quote .Env }} always;
   absolute_redirect {{ .Vars.app.absolute_redirect }};
 
   location = /healthz { return 200 'ok\n'; }

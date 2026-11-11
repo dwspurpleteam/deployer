@@ -3,5 +3,5 @@ app:
     PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry-stage:8080
 
 compose:
-  x-composer:
+  x-gitsail:
     enabled: false

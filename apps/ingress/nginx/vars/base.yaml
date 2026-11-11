@@ -8,7 +8,7 @@ app:
   http_port: 80
   https_port: 443
   certificate: site
-  cookie: composer_stage
+  cookie: gitsail_stage
   resolver: 127.0.0.11
   resolver_valid: 5s
   max_body_size: 10m

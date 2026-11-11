@@ -19,7 +19,7 @@ app:
     - http://nginx-stage:19080/webhooks/livekit
 
 compose:
-  x-composer:
+  x-gitsail:
     enabled: false
   services:
     openvidu:

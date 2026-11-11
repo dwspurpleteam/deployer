@@ -11,7 +11,7 @@ app:
       upstream: streamapi-stage:19090
 
 compose:
-  x-composer:
+  x-gitsail:
     enabled: false
   services:
     nginx:
