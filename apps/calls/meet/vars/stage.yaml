@@ -6,7 +6,7 @@ app:
     MEET_REDIS_DB: '1'
 
 compose:
-  x-composer:
+  x-gitsail:
     enabled: false
   services:
     meet:
