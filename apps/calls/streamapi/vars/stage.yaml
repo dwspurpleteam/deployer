@@ -10,7 +10,7 @@ app:
     prefix: streamapi.stage.v1
 
 compose:
-  x-composer:
+  x-gitsail:
     enabled: false
   services:
     streamapi:
