@@ -1,7 +1,3 @@
-build:
-  repository: https://github.com/minio/mc.git
-  tag: RELEASE.2025-08-13T08-35-41Z
-
 app:
   env:
     MINIO_ROOT_USER: minioadmin
@@ -63,6 +59,7 @@ compose:
           condition: service_completed_successfully
 
     minio-users:
+      image: bitnamilegacy/minio-client@sha256:00dcc4e58ada0df45bb7d9ee435af98295f96c27c3c68292ce78ec700a87b511
       restart: 'no'
       entrypoint: /bin/sh
       command: /config/users.sh

@@ -1,7 +1,3 @@
-build:
-  repository: https://github.com/dwspurpleteam/streamapi.git
-  tag: v1.2.0
-
 app:
   name: streamapi
   grpc:
@@ -86,6 +82,7 @@ app:
 compose:
   services:
     streamapi:
+      image: ghcr.io/dwspurpleteam/streamapi:8866f6691c3d3e5c7979c30ba8e88813eab19dc2
       command: --config /etc/streamapi.yaml
       environment:
         GOMEMLIMIT: 192MiB
