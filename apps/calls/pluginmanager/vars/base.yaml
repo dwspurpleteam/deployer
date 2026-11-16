@@ -14,7 +14,7 @@ app:
 compose:
   services:
     pluginmanager:
-      image: ghcr.io/dwspurpleteam/pluginmanager:b5ed165eed37bf721a19d94cdd974e5f53681eb3
+      image: ghcr.io/dwspurpleteam/pluginmanager:644695a4b4d83e2fde32a8829bcee5040f43093d
       env_file:
       - ./configs/service.env
       mem_limit: 512m
