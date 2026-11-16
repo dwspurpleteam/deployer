@@ -1,7 +1,3 @@
-build:
-  repository: https://github.com/dwspurpleteam/openvidu-meet.git
-  tag: 95f3d4027ea3976f4560de0d3ac74bf1c3929742
-
 app:
   env:
     SERVER_PORT: '6080'
@@ -39,6 +35,7 @@ app:
 compose:
   services:
     meet:
+      image: ghcr.io/dwspurpleteam/meet:fa847d649f3d5de029f777ffc3d99a1ddd279765
       env_file:
       - ./configs/service.env
       mem_limit: 384m
