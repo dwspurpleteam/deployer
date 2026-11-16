@@ -8,7 +8,7 @@ app:
 compose:
   services:
     pluginregistry:
-      image: ghcr.io/dwspurpleteam/pluginregistry:3736288a86572f9ed034630fcdce32fac13df535
+      image: ghcr.io/dwspurpleteam/pluginregistry:48cd784fbb49619f78e1f34f6e9627422d83e632
       env_file:
       - ./configs/service.env
       mem_limit: 512m
