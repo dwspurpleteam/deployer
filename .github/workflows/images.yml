@@ -1,0 +1,36 @@
+name: images
+
+on:
+  repository_dispatch:
+    types: [image]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+
+      - name: image
+        id: image
+        env:
+          SERVICE: ${{ github.event.client_payload.service }}
+          SHA: ${{ github.event.client_payload.sha }}
+        run: |
+          file="apps/calls/$SERVICE/vars/base.yaml"
+          image="ghcr.io/dwspurpleteam/$SERVICE"
+          echo "sha=${SHA:0:7}" >> "$GITHUB_OUTPUT"
+          sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$SHA|" "$file"
+
+      - name: pull-request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: images/${{ github.event.client_payload.service }}
+          title: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
+          commit-message: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
+          body: ''
+          add-paths: apps/calls/${{ github.event.client_payload.service }}/vars/base.yaml
