@@ -38,16 +38,10 @@ jobs:
       - run: |
           file="apps/calls/${{ matrix.service }}/vars/base.yaml"
           image="ghcr.io/dwspurpleteam/${{ matrix.service }}"
-          current=$(sed -n "s|.*image: $image:\\([0-9a-f]\\{40\\}\\).*|\\1|p" "$file")
-          test "${#current}" -eq 40
           sha=$(git ls-remote "https://github.com/dwspurpleteam/${{ matrix.repository }}.git" "refs/heads/${{ matrix.branch }}" | cut -f1)
-          test "${#sha}" -eq 40
-          status=$(gh api "repos/dwspurpleteam/${{ matrix.repository }}/compare/$current...$sha" --jq .status)
-          if [ "$status" = ahead ] && docker manifest inspect "$image:$sha" >/dev/null 2>&1; then
-            sed -i "s|image: $image:$current|image: $image:$sha|" "$file"
+          if docker manifest inspect "$image:$sha" >/dev/null 2>&1; then
+            sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$sha|" "$file"
           fi
-        env:
-          GH_TOKEN: ${{ github.token }}
       - uses: peter-evans/create-pull-request@v7
         with:
           branch: images/${{ matrix.service }}
