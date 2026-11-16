@@ -32,7 +32,7 @@ jobs:
               author=$(gh api "repos/$REPOSITORY/commits/$SHA" --jq '.author.login // empty')
             fi
             if [ -n "$author" ]; then
-              echo "author=@$author" >> "$GITHUB_OUTPUT"
+              echo "author=by @$author" >> "$GITHUB_OUTPUT"
             fi
           fi
           sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$SHA|" "$file"
