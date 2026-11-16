@@ -34,15 +34,18 @@ jobs:
             repository: openvidu-meet
             branch: vareonix/main
     steps:
-      - uses: actions/checkout@v6
-      - run: |
+      - name: checkout
+        uses: actions/checkout@v6
+      - name: image
+        run: |
           file="apps/calls/${{ matrix.service }}/vars/base.yaml"
           image="ghcr.io/dwspurpleteam/${{ matrix.service }}"
           sha=$(git ls-remote "https://github.com/dwspurpleteam/${{ matrix.repository }}.git" "refs/heads/${{ matrix.branch }}" | cut -f1)
           if docker manifest inspect "$image:$sha" >/dev/null 2>&1; then
             sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$sha|" "$file"
           fi
-      - uses: peter-evans/create-pull-request@v7
+      - name: pull-request
+        uses: peter-evans/create-pull-request@v7
         with:
           branch: images/${{ matrix.service }}
           title: 'обновить образ ${{ matrix.service }}'
