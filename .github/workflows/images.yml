@@ -20,10 +20,21 @@ jobs:
         env:
           SERVICE: ${{ github.event.client_payload.service }}
           SHA: ${{ github.event.client_payload.sha }}
+          REPOSITORY: ${{ github.event.client_payload.repository }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           file="apps/calls/$SERVICE/vars/base.yaml"
           image="ghcr.io/dwspurpleteam/$SERVICE"
           echo "sha=${SHA:0:7}" >> "$GITHUB_OUTPUT"
+          if [ -n "$REPOSITORY" ]; then
+            author=$(gh api "repos/$REPOSITORY/commits/$SHA/pulls" --jq '.[] | select(.merge_commit_sha == env.SHA) | .user.login' | head -n 1)
+            if [ -z "$author" ]; then
+              author=$(gh api "repos/$REPOSITORY/commits/$SHA" --jq '.author.login // empty')
+            fi
+            if [ -n "$author" ]; then
+              echo "author=by @$author" >> "$GITHUB_OUTPUT"
+            fi
+          fi
           sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$SHA|" "$file"
 
       - name: pull-request
@@ -32,5 +43,5 @@ jobs:
           branch: images/${{ github.event.client_payload.service }}
           title: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
           commit-message: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
-          body: ''
+          body: ${{ steps.image.outputs.author }}
           add-paths: apps/calls/${{ github.event.client_payload.service }}/vars/base.yaml
