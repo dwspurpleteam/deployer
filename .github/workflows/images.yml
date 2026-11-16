@@ -1,0 +1,57 @@
+name: images
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: images
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - service: streamapi
+            repository: streamapi
+            branch: main
+          - service: pluginmanager
+            repository: plugin-manager-service
+            branch: master
+          - service: pluginregistry
+            repository: plugin-registry
+            branch: master
+          - service: openvidu
+            repository: openvidu-livekit
+            branch: vareonix/main
+          - service: meet
+            repository: openvidu-meet
+            branch: vareonix/main
+    steps:
+      - uses: actions/checkout@v6
+      - run: |
+          file="apps/calls/${{ matrix.service }}/vars/base.yaml"
+          image="ghcr.io/dwspurpleteam/${{ matrix.service }}"
+          current=$(sed -n "s|.*image: $image:\\([0-9a-f]\\{40\\}\\).*|\\1|p" "$file")
+          test "${#current}" -eq 40
+          sha=$(git ls-remote "https://github.com/dwspurpleteam/${{ matrix.repository }}.git" "refs/heads/${{ matrix.branch }}" | cut -f1)
+          test "${#sha}" -eq 40
+          status=$(gh api "repos/dwspurpleteam/${{ matrix.repository }}/compare/$current...$sha" --jq .status)
+          if [ "$status" = ahead ] && docker manifest inspect "$image:$sha" >/dev/null 2>&1; then
+            sed -i "s|image: $image:$current|image: $image:$sha|" "$file"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: images/${{ matrix.service }}
+          title: 'обновить образ ${{ matrix.service }}'
+          commit-message: 'обновить образ ${{ matrix.service }}'
+          body: 'обновить production до последнего собранного коммита ${{ matrix.repository }}.'
+          add-paths: apps/calls/${{ matrix.service }}/vars/base.yaml
