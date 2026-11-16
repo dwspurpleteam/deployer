@@ -1,7 +1,3 @@
-build:
-  repository: https://github.com/dwspurpleteam/openvidu-livekit.git
-  tag: 3.9.0
-
 app:
   keys:
     "mvpkey": ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArL0tJZThoYVdnUk15UzlRMFo4d0psQW93dzZLSTM0eC8wcHlhL2tpTkU0Cjl4azNyYjNFNmlCMWt4bi9meCtnQnkwM25ZUjVvZmxFWFNJTnJocGxFWE0KLS0tIG9iSm5HZm8wN3JqMFBTMXFOUy9DZS9ZcUV4dWpxZFU0QzJnbHQrV3NOOWMKzQQBuw4wjqgrR5H4MyVlf9iy56iA4Qze8BiY3xgEqepq36Sbqngz/CQBnsQxx4k9sPurxXcxrQL29qjMUlRdB297lryVaD9i44KwUVc+gCY=]
@@ -37,6 +33,7 @@ app:
 compose:
   services:
     openvidu:
+      image: ghcr.io/dwspurpleteam/openvidu:2af7089f38268f888708bd7fa5da2cb73373e0ff
       command: --config /etc/livekit.yaml
       ports:
       - 7881:7881/tcp
