@@ -33,7 +33,7 @@ app:
 compose:
   services:
     openvidu:
-      image: ghcr.io/dwspurpleteam/openvidu:2af7089f38268f888708bd7fa5da2cb73373e0ff
+      image: ghcr.io/dwspurpleteam/openvidu:f08b8d3a05826af75d5ce2182127d41b62a0baaa
       command: --config /etc/livekit.yaml
       ports:
       - 7881:7881/tcp
