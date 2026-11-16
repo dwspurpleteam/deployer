@@ -1,0 +1,7 @@
+app:
+  env:
+    ATTENDANCE_STREAMAPI_TARGET: nginx-stage:19090
+
+compose:
+  x-gitsail:
+    enabled: false
