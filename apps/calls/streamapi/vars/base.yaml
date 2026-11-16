@@ -82,7 +82,7 @@ app:
 compose:
   services:
     streamapi:
-      image: ghcr.io/dwspurpleteam/streamapi:b7a8e82ed006c70804a5ea0c189229e67bf51015
+      image: ghcr.io/dwspurpleteam/streamapi:6157ca2b3a6e09aa4f430e2be25c73d43112d12e
       command: --config /etc/streamapi.yaml
       environment:
         GOMEMLIMIT: 192MiB
