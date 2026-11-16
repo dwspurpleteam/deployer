@@ -1,57 +1,35 @@
 name: images
 
 on:
-  schedule:
-    - cron: '*/10 * * * *'
-  workflow_dispatch:
+  repository_dispatch:
+    types: [image]
 
 permissions:
   contents: write
   pull-requests: write
 
-concurrency: images
-
 jobs:
   update:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - service: streamapi
-            repository: streamapi
-            branch: main
-          - service: pluginmanager
-            repository: plugin-manager-service
-            branch: master
-          - service: pluginregistry
-            repository: plugin-registry
-            branch: master
-          - service: openvidu
-            repository: openvidu-livekit
-            branch: vareonix/main
-          - service: meet
-            repository: openvidu-meet
-            branch: vareonix/main
     steps:
       - name: checkout
         uses: actions/checkout@v6
 
       - name: image
         id: image
+        env:
+          SERVICE: ${{ github.event.client_payload.service }}
+          SHA: ${{ github.event.client_payload.sha }}
         run: |
-          file="apps/calls/${{ matrix.service }}/vars/base.yaml"
-          image="ghcr.io/dwspurpleteam/${{ matrix.service }}"
-          sha=$(git ls-remote "https://github.com/dwspurpleteam/${{ matrix.repository }}.git" "refs/heads/${{ matrix.branch }}" | cut -f1)
-          echo "sha=${sha:0:7}" >> "$GITHUB_OUTPUT"
-          if docker manifest inspect "$image:$sha" >/dev/null 2>&1; then
-            sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$sha|" "$file"
-          fi
+          file="apps/calls/$SERVICE/vars/base.yaml"
+          image="ghcr.io/dwspurpleteam/$SERVICE"
+          echo "sha=${SHA:0:7}" >> "$GITHUB_OUTPUT"
+          sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$SHA|" "$file"
 
       - name: pull-request
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: images/${{ matrix.service }}
-          title: 'deploy(${{ matrix.service }}): ${{ steps.image.outputs.sha }}'
-          commit-message: 'deploy(${{ matrix.service }}): ${{ steps.image.outputs.sha }}'
-          add-paths: apps/calls/${{ matrix.service }}/vars/base.yaml
+          branch: images/${{ github.event.client_payload.service }}
+          title: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
+          commit-message: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
+          add-paths: apps/calls/${{ github.event.client_payload.service }}/vars/base.yaml
