@@ -32,4 +32,5 @@ jobs:
           branch: images/${{ github.event.client_payload.service }}
           title: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
           commit-message: 'deploy(${{ github.event.client_payload.service }}): ${{ steps.image.outputs.sha }}'
+          body: ''
           add-paths: apps/calls/${{ github.event.client_payload.service }}/vars/base.yaml
