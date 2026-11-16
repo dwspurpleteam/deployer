@@ -36,19 +36,22 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v6
+
       - name: image
+        id: image
         run: |
           file="apps/calls/${{ matrix.service }}/vars/base.yaml"
           image="ghcr.io/dwspurpleteam/${{ matrix.service }}"
           sha=$(git ls-remote "https://github.com/dwspurpleteam/${{ matrix.repository }}.git" "refs/heads/${{ matrix.branch }}" | cut -f1)
+          echo "sha=${sha:0:7}" >> "$GITHUB_OUTPUT"
           if docker manifest inspect "$image:$sha" >/dev/null 2>&1; then
             sed -i -E "s|(image: $image:)[0-9a-f]{40}|\\1$sha|" "$file"
           fi
+
       - name: pull-request
         uses: peter-evans/create-pull-request@v7
         with:
           branch: images/${{ matrix.service }}
-          title: 'обновить образ ${{ matrix.service }}'
-          commit-message: 'обновить образ ${{ matrix.service }}'
-          body: 'обновить production до последнего собранного коммита ${{ matrix.repository }}.'
+          title: 'deploy(${{ matrix.service }}): ${{ steps.image.outputs.sha }}'
+          commit-message: 'deploy(${{ matrix.service }}): ${{ steps.image.outputs.sha }}'
           add-paths: apps/calls/${{ matrix.service }}/vars/base.yaml
