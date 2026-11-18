@@ -31,11 +31,12 @@ app:
     MEET_AWS_REGION: us-east-1
     MEET_S3_WITH_PATH_STYLE_ACCESS: 'true'
     MEET_PLUGINS: '[{"id":"attendance","title":"Посещаемость","url":"https://decisively-relaxed-firebrat.cloudpub.ru/"}]'
+    MEET_PLUGIN_ACTIVATION_MOCK: 'true'
 
 compose:
   services:
     meet:
-      image: ghcr.io/dwspurpleteam/meet:745fb65a360cec9d3b8eab4c09078365e1778fcf
+      image: ghcr.io/dwspurpleteam/meet:6cfe9cbdfb7da85f0d5df50b98a1fea68e904272
       env_file:
       - ./configs/service.env
       mem_limit: 384m
