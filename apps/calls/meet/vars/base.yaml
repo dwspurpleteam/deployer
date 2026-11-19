@@ -36,7 +36,7 @@ app:
 compose:
   services:
     meet:
-      image: ghcr.io/dwspurpleteam/meet:6cfe9cbdfb7da85f0d5df50b98a1fea68e904272
+      image: ghcr.io/dwspurpleteam/meet:296f8edc363c8f47a43f3c5ae9d5bc12c5bd3554
       env_file:
       - ./configs/service.env
       mem_limit: 384m
