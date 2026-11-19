@@ -1,6 +1,6 @@
 app:
   env:
-    ATTENDANCE_STREAMAPI_TARGET: nginx-stage:19090
+    SPRING_PROFILES_ACTIVE: stage
 
 compose:
   x-gitsail:
