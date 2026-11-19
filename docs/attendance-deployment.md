@@ -1,28 +1,50 @@
 # Деплой плагина посещаемости
 
-GitSail разворачивает `apps/calls/attendance` из `main` в prod. NGINX публикует страницу и API по адресу `https://calls.vareonix.cc/apps/plugin-attendance/`, удаляя префикс при проксировании на `attendance:8081`. `/plugins` остаётся каталогом реестра. Порт плагина на хост не публикуется.
+GitSail разворачивает `apps/calls/attendance` из `main` в prod. NGINX публикует страницу и API по адресу `https://calls.vareonix.cc/apps/plugin-attendance/`, удаляя префикс перед передачей запроса в `attendance:8081`. Порт контейнера на хост не публикуется.
 
-## Сборка и версия
+## Сборка и обновление образа
 
-`build.tag` закреплён на `5132cf88a9d6513f93d92229b09cc03552e96419` — доступный локально `plugins/main`. Dockerfile собирает frontend и backend в один jar на Java 25. В runtime копируется только jar, без локального `application-stage.yml` и cookie.
+Workflow `plugin-attendance` в репозитории `plugins` собирает frontend и backend в один JAR на Java 25 и выполняет тесты. После push в `main` общий workflow `image.yml` упаковывает готовый `backend/build/libs/plugin-attendance.jar` через `plugin-attendance/Dockerfile`, публикует образ `ghcr.io/dwspurpleteam/attendance:<commit SHA>` и отправляет событие `image` в deployer.
 
-Остальные сервисы используют готовые образы GHCR, но доступный CI `plugins` пока только собирает и тестирует jar, без публикации Docker-образа. Поэтому attendance сохраняет сборку из исходников через GitSail. После добавления публикации образа можно заменить `build` и Dockerfile на `compose.services.attendance.image` с закреплённым SHA. Текущий workflow `images.yml` обновляет только поле `image` и не обновляет `build.tag`.
+Workflow `images.yml` в deployer создаёт PR с обновлением `compose.services.attendance.image` в `apps/calls/attendance/vars/base.yaml`. После слияния PR GitSail применяет новую версию. Сборка из исходников на сервере не нужна; образ закрепляется полным SHA коммита.
 
-Для обновления измените `build.tag` в deployer. Пуш в `plugins` сам по себе не обновляет закреплённую версию на стенде.
+Для CI в `plugins` должны быть настроены:
 
-Одна реплика обязательна: состояние звонков хранится в памяти и теряется при перезапуске attendance. LiveKit при этом не перезапускается.
+- Доступ репозитория к Maven-пакету `pluginsdk:plugin-sdk:1.1.0` в GitHub Packages. Gradle использует `GITHUB_ACTOR` и стандартный `GITHUB_TOKEN` с `packages: read`.
+- Секрет `DEPLOYER_TOKEN`, который используется общим workflow для отправки события в репозиторий deployer.
+- Доступ сервера GitSail к образу attendance в GHCR, как для остальных сервисов.
 
-## Ограничения перед выкладкой
+## Профили и порядок первого обновления
 
-Текущий prod streamapi включает проверку прав через Plugin Manager. Закреплённый attendance отправляет `call_id`, типы событий и `x-call-id`, но не передаёт контекст конкретной активации. Исходников SHA развёрнутого streamapi в локальном репозитории нет; совместимость с его проверкой прав не подтверждена. Перед слиянием проверьте реальную подписку на звонок. `UP` у health и HTTP 200 у `/api/info` подтверждают запуск процесса, но не доступ к событиям. При `UNAUTHENTICATED` или `PERMISSION_DENIED` нужна доработка интеграции в `plugins`, а затем обновление закреплённой версии. Не отключайте проверку прав streamapi для этого.
+`app.env.SPRING_PROFILES_ACTIVE` выбирает настройки внутри JAR:
 
-Конфигурация публикует прямой URL плагина. В `MEET_PLUGINS` остаётся прежний внешний URL; автоматическое появление рабочего окна посещаемости в Meet этим деплоем не обеспечивается. Каталог и активацию через платформу нужно проверять отдельно.
+| Окружение | Профиль | StreamAPI | TLS |
+|---|---|---|---|
+| Prod | `prod` | `nginx:19090` | Отключён внутри Docker-сети |
+| Stage | `stage` | `nginx-stage:19090` | Отключён внутри Docker-сети |
 
-Result Gateway этим деплоем не запускается. По умолчанию плагин обращается к `localhost:8089` внутри своего контейнера, поэтому публикация сводки не работает. Для доступного Result Gateway задайте `ATTENDANCE_RESULT_GATEWAY_URL` и `ATTENDANCE_RESULT_GATEWAY_CALLBACK_URL` в `app.env`.
+Оба серверных профиля слушают `0.0.0.0:8081`. Локальный профиль находится во внешней папке `backend/config` и в образ не попадает. Секрет конкретной активации поступает от Plugin Manager в `POST /control`; глобальный ключ менеджера плагину не нужен.
+
+При первом переходе с прежней сборки соблюдайте порядок:
+
+1. Слейте изменения attendance в `plugins/main` и дождитесь публикации образа.
+2. Слейте созданный PR deployer с новым тегом образа. Существующие `ATTENDANCE_STREAMAPI_TARGET` и `ATTENDANCE_STREAMAPI_PLAINTEXT` позволяют новой сборке работать до переключения на профили.
+3. Примените изменение deployer, которое задаёт `SPRING_PROFILES_ACTIVE` и удаляет эти дублирующие переменные.
+4. Зарегистрируйте в Plugin Registry новую версию `1.0.1` по манифесту `plugin-attendance/manifests/manifest-v1.1_plugin-v1.0.1.json` из `plugins`.
+
+В манифесте должны быть серверные адреса:
+
+```text
+frontend.url-web:    https://calls.vareonix.cc/apps/plugin-attendance/
+backend.health-url: https://calls.vareonix.cc/apps/plugin-attendance/actuator/health
+backend.control-url: https://calls.vareonix.cc/apps/plugin-attendance/control
+```
+
+Опубликованные версии Registry неизменяемы: прежнюю версию с URL локального туннеля заменяет новая запись версии. Манифест запрашивает `participant.joined`, `participant.left`, `call.ended` и задаёт `initial-state: []`.
 
 ## Проверка prod
 
-С машины с доступом к стенду выполните без stage-cookie (в PowerShell используйте `curl.exe`):
+С машины с доступом к серверу выполните без stage-cookie (в PowerShell используйте `curl.exe`):
 
 ```sh
 curl -fsS https://calls.vareonix.cc/apps/plugin-attendance/actuator/health
@@ -30,41 +52,36 @@ curl -fsS https://calls.vareonix.cc/apps/plugin-attendance/api/info
 curl -fsSI https://calls.vareonix.cc/apps/plugin-attendance/
 ```
 
-Ожидается health `UP`, в info `source: streamapi`, target с `nginx:19090`, у страницы HTTP 200. Во время сборки и запуска возможен временный 502. Отсутствие маршрута обычно даёт 404.
+Ожидается health `UP`, в info `source: streamapi`, версия `1.0.1` и target с `nginx:19090`, у страницы HTTP 200. Health подтверждает запуск приложения; подписку нужно проверить отдельно.
 
-Создайте звонок в том же окружении и откройте плагин до входа проверяемого участника:
-
-```text
-https://calls.vareonix.cc/apps/plugin-attendance/?callId=RM_…
-```
-
-`callId` — SID комнаты LiveKit, а не имя комнаты. События до подписки не воспроизводятся. Вход и выход участника должны обновить список. Для диагностики можно несколько раз запросить состояние подписки:
+Создайте звонок и запросите активацию через Plugin Manager, заменив callId и idempotencyKey. Для новой попытки активации используйте новый ключ; повтор того же запроса с прежним ключом возвращает прежний activationId.
 
 ```sh
+curl --fail-with-body --request POST 'https://calls.vareonix.cc/v1/activations' \
+  --header 'Content-Type: application/json' \
+  --data '{"callId":"RM_REPLACE_WITH_ROOM_SID","pluginId":"attendance","pluginVersion":"1.0.1","pluginRegistryId":"local","requestedBy":"postman","idempotencyKey":"REPLACE_WITH_NEW_UNIQUE_KEY"}'
+```
+
+`callId` — SID комнаты LiveKit вида `RM_...`. По возвращённому `activationId` проверьте состояние менеджера:
+
+```sh
+curl -fsS https://calls.vareonix.cc/v1/activations/REPLACE_WITH_ACTIVATION_ID
 curl -fsS https://calls.vareonix.cc/apps/plugin-attendance/api/calls/RM_REPLACE_WITH_ROOM_SID/participants
 ```
 
-Проверяйте `status`, `statusMessage`, `trackingSince` и изменения `present`/`left`; ошибки прав нельзя считать успешной проверкой даже при HTTP 200.
+Ожидается `ACTIVE` у менеджера и `TRACKING` у плагина. Менеджер сам доставляет ID и секрет в `/control`, плагин подписывается через Java SDK; вручную придумывать секрет не нужно. До активации API участников возвращает 404.
 
-На сервере:
+Откройте `https://calls.vareonix.cc/apps/plugin-attendance/?callId=RM_REPLACE_WITH_ROOM_SID`, затем выполните вход и выход проверяемого участника. Должны обновляться `present` и `left`. Начальный состав пока не обрабатывается, поэтому участники, вошедшие до подписки, могут отсутствовать. Открытие страницы не запускает подписку. Встраивание интерфейса в Meet настраивается отдельно.
+
+Для диагностики на сервере:
 
 ```sh
 docker ps -a --filter label=com.docker.compose.service=attendance
 docker logs --tail 100 <container>
 ```
 
-## Stage
+## Stage и откат
 
-Attendance на stage отключён через `compose.x-gitsail.enabled: false` в `apps/calls/attendance/vars/stage.yaml`, как и остальные stage-сервисы в текущем main. Для проверки до prod нужно отдельно включить attendance и необходимые ему nginx, streamapi, Plugin Manager, Plugin Registry, OpenVidu, Meet на stage в отслеживаемой ветке `dev`. Не переносите включение stage в prod PR без необходимости.
+Stage остаётся отключённым через `compose.x-gitsail.enabled: false`. После отдельного включения окружения attendance использует профиль `stage`, адрес `attendance-stage:8081` и StreamAPI `nginx-stage:19090`. Для внешних запросов нужен cookie окружения `gitsail_stage=<secret>:stage`; значение секрета в Git не сохраняется. Проверяйте заголовок `X-GitSail-Environment` и target в `/api/info`.
 
-Stage использует `attendance-stage:8081` и `nginx-stage:19090`. После включения окружения добавляйте к HTTP-запросам:
-
-```sh
-curl -i -H 'Cookie: gitsail_stage=<secret>:stage' https://calls.vareonix.cc/apps/plugin-attendance/api/info
-```
-
-Секрет — расшифрованное значение `app.stage_token` из `apps/ingress/nginx/vars/base.yaml`. Не сохраняйте его в Git. Проверяйте target `nginx-stage:19090` и заголовок окружения: в текущем main это `X-GitSail-Environment`, в старой dev-конфигурации — `X-Composer-Environment`. С неверным cookie можно попасть в prod. Сам backend stage подключается к внутреннему nginx без TLS и без cookie.
-
-## Откат
-
-Для отката версии верните предыдущий `build.tag`. Для полного удаления attendance нужно одновременно убрать сервис, upstream и маршрут nginx: оставшийся маршрут будет давать ошибки. Откат выполняется в отслеживаемой ветке соответствующего окружения.
+Для отката верните предыдущий тег `compose.services.attendance.image`. При откате на сборку без серверных профилей верните и прежние переменные `ATTENDANCE_STREAMAPI_TARGET`/`ATTENDANCE_STREAMAPI_PLAINTEXT` из Git. Одна реплика обязательна: состояние хранится в памяти и теряется при перезапуске; для продолжения потребуется новая доставка команды активации менеджером.
