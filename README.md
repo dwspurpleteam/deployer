@@ -1,6 +1,6 @@
 <p align="right">
   <img align="left" src="https://hits.sh/github.com/dwspurpleteam/deployer.svg?style=flat&amp;label=views&amp;color=007ec6" alt="views" />
-  powered by <a href="https://github.com/dmironenko/composer">composer</a>
+  powered by <a href="https://github.com/dmironenko/gitsail">gitsail</a>
 </p>
 
 # Deployer
@@ -73,12 +73,12 @@ flowchart LR
 
 ## Доступ на stage
 
-Откройте [звонки](https://calls.vareonix.cc/meet/) и выполните в консоли браузера `document.cookie = "composer_stage=<secret>:stage; Path=/; Secure; SameSite=Lax"; location.reload();`. Секрет запросите у ответственного за инфраструктуру: это расшифрованное значение `app.stage_token` из [конфига ingress](apps/ingress/nginx/vars/base.yaml)
+Откройте [звонки](https://calls.vareonix.cc/meet/) и выполните в консоли браузера `document.cookie = "gitsail_stage=<secret>:stage; Path=/; Secure; SameSite=Lax"; location.reload();`. Секрет запросите у ответственного за инфраструктуру: это расшифрованное значение `app.stage_token` из [конфига ingress](apps/ingress/nginx/vars/base.yaml)
 
-Для grpc на stage передавайте metadata `cookie: composer_stage=<secret>:stage`; без нее запросы идут в prod. Для привязки подписок передавайте `x-call-id` со значением `call_id` запроса
+Для grpc на stage передавайте metadata `cookie: gitsail_stage=<secret>:stage`; без нее запросы идут в prod. Для привязки подписок передавайте `x-call-id` со значением `call_id` запроса
 
 ## Плагин посещаемости
 
-Приложение [`apps/calls/attendance`](apps/calls/attendance) собирает backend и frontend из закреплённого коммита репозитория `plugins`. Composer разворачивает его вместе с остальными приложениями: ветка `dev` — stage, `main` — prod. Ручной запуск jar и отдельный workflow деплоя не нужны.
+Приложение [`apps/calls/attendance`](apps/calls/attendance) собирает backend и frontend из закреплённого коммита репозитория `plugins`. GitSail разворачивает prod из `main`; stage для посещаемости отключён через `compose.x-gitsail.enabled: false`. Сборка из исходников сохранена, поскольку CI плагина пока не публикует образ в GHCR.
 
 Адрес: `https://calls.vareonix.cc/apps/plugin-attendance/?callId=RM_…`. Пути `/apps/plugin-<name>/` предназначены для интерфейсов плагинов; `/plugins` остаётся каталогом реестра. Cookie окружения выбирает prod или stage; backend каждого окружения подписывается на свой streamapi через внутренний nginx. Проверки, обновление версии и откат описаны в [инструкции](docs/attendance-deployment.md).

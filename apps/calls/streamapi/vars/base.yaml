@@ -1,9 +1,8 @@
-build:
-  repository: https://github.com/dwspurpleteam/streamapi.git
-  tag: v1.2.0
-
 app:
   name: streamapi
+  plugin_manager:
+    address: pluginmanager:9000
+    timeout: 2s
   grpc:
     latency_buckets_seconds: [0.0001, 0.00025, 0.0005, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2]
     max_concurrent_streams: 512
@@ -86,6 +85,7 @@ app:
 compose:
   services:
     streamapi:
+      image: ghcr.io/dwspurpleteam/streamapi:bfecae2e34b98a9c3882092d9674ffc8582a81fe
       command: --config /etc/streamapi.yaml
       environment:
         GOMEMLIMIT: 192MiB

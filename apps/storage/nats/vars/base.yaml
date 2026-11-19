@@ -1,5 +1,6 @@
 app:
   port: 4222
+  max_payload: 2097152
   http: 127.0.0.1:8222
   authorization:
     user: admin

@@ -1,7 +1,3 @@
-build:
-  repository: https://github.com/dwspurpleteam/plugin-registry.git
-  tag: 8efe1f63156de91c778db1d3b5a9d51e0314758d
-
 app:
   env:
     DB_URL: jdbc:postgresql://postgres:5432/plugin_registry
@@ -12,6 +8,7 @@ app:
 compose:
   services:
     pluginregistry:
+      image: ghcr.io/dwspurpleteam/pluginregistry:9f8498a16f3b6343aa90c97fe481bc65a20ed994
       env_file:
       - ./configs/service.env
       mem_limit: 512m

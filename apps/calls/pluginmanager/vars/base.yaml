@@ -1,7 +1,3 @@
-build:
-  repository: https://github.com/dwspurpleteam/plugin-manager-service.git
-  tag: 25b449aeae45c8a5beb6fd56294083bbd823af8a
-
 app:
   env:
     REDIS_URL: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBteDFXWmo3TmgvUGpFOTZWTWRVN3ZnRVQ1VlFQYnVxaHNjcit2cldwWFM0ClhRYzhZeEowZUNOZHlvdGRwWnpVL3J6RDB6MmNHMVFsMHVOQnoxUGMvMVUKLS0tIDJaelhSNHI5VGtlRGNwMWJ3UDdydE9XS2JrdTdMcEFWZGlFd3oycnoyZjgKlsmmi25Au7RUTlm/Zpb4a4KooHO6CXANAulKjhpLgGjJbItJd2YIZdX5OSKOVUqzrLqmPwtHj6U+frr/ki7nq/jfFQpe9KAAn/oTFXbBQJdQUjlhMPSiunHJaYOk7Bjtt6krhg==]
@@ -12,11 +8,13 @@ app:
     DB_MIGRATION_USERNAME: plugin_manager_migration
     DB_MIGRATION_PASSWORD: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB0TXFkK1lGaHRlSzR3OS9hL1BNeWlXeWpJejdwdTVKS0JzYmdOSEcwN21BCjVlcjBJM05BOTdYbm9zQ2prOEcwczV4RmtkQW12MnJ6VDQzcVRpM1FFeG8KLS0tIERJcnN5V3lHekh2TDVlWlpoRDkyUWc5d2VadEZwcTBrSUpmQkRqeFRpdU0KYGAj+Jdh3ycvcVk3V2bVgpUWV76iyqkYyY3SNHkSUmZ0CcnAkJ0cEaxI8wuFreXkInSWb2CFY1pnr+OLfilalz9XqvfU3UMov9L6]
     QUARKUS_FLYWAY_MIGRATION_MIGRATE_AT_START: 'false'
+    PLUGIN_MANAGER_ACTIVATION_SECRET_KEY: ENC[YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3cVpSb1RCVEkwQ09yYm9UNVJwMHpwRlh1N2lVRDNEMHo1emE0RVRZMm5NCmtYbGxDMS9Cc2NTVit0SVE1TGpCS2pySnpIWlh2c0dDWUJxZENJMWxRTjQKLS0tIDJ4Z0h5UUlURGhvbThNZmdhdXRmdmt3MlF4RjhrN0pVdGs3Z2NPeWVCVkEK5/uBaxodhmGdJB2+Cybp5PpO2wxh3Kxhf160aJkWaNgK4JhbctIaRvQd/8wlqhsSTQLtjir9hN7SkXQ1gAS+0sut05CUpjzNyBsf+98LF1WQssMiEoFEnwgek3aMCGf3]
     PLUGIN_MANAGER_REGISTRIES_LOCAL_URL: http://pluginregistry:8080
 
 compose:
   services:
     pluginmanager:
+      image: ghcr.io/dwspurpleteam/pluginmanager:785e0a0cd71476b1f07877d174e6e78bca48de38
       env_file:
       - ./configs/service.env
       mem_limit: 512m
