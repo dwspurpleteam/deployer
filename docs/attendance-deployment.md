@@ -1,34 +1,28 @@
 # Деплой плагина посещаемости
 
-Плагин разворачивает существующий Composer, который отслеживает `dev` для stage и `main` для prod. Настройки сервера, systemd и GitHub Actions менять не нужно. Новое приложение находится в `apps/calls/attendance`; URL публикует `apps/calls/nginx`.
+GitSail разворачивает `apps/calls/attendance` из `main` в prod. NGINX публикует страницу и API по адресу `https://calls.vareonix.cc/apps/plugin-attendance/`, удаляя префикс при проксировании на `attendance:8081`. `/plugins` остаётся каталогом реестра. Порт плагина на хост не публикуется.
 
-Страница и API плагина публикуются под `/apps/plugin-attendance/`. Схема `/apps/plugin-<name>/` явно обозначает плагин и не пересекается с каталогом `/plugins` и страницами версий `/plugins/<plugin>/versions`. NGINX удаляет `/apps/plugin-attendance/` при проксировании; относительные пути frontend продолжают работать. Запрос без завершающего `/` перенаправляется с сохранением query-параметров.
+## Сборка и версия
 
-## Окружения
+`build.tag` закреплён на `5132cf88a9d6513f93d92229b09cc03552e96419` — доступный локально `plugins/main`. Dockerfile собирает frontend и backend в один jar на Java 25. В runtime копируется только jar, без локального `application-stage.yml` и cookie.
 
-| Ветка deployer | Сервис | Источник событий |
-| --- | --- | --- |
-| `main` | `attendance:8081` | `nginx:19090` → streamapi prod |
-| `dev` | `attendance-stage:8081` | `nginx-stage:19090` → streamapi stage |
+Остальные сервисы используют готовые образы GHCR, но доступный CI `plugins` пока только собирает и тестирует jar, без публикации Docker-образа. Поэтому attendance сохраняет сборку из исходников через GitSail. После добавления публикации образа можно заменить `build` и Dockerfile на `compose.services.attendance.image` с закреплённым SHA. Текущий workflow `images.yml` обновляет только поле `image` и не обновляет `build.tag`.
 
-Dockerfile собирает frontend и backend в один jar на Java 25. В runtime попадает только jar; локальный `application-stage.yml` с cookie не копируется. Прямое подключение к внутреннему nginx не требует stage-cookie или TLS. Порт 8081 на хост не публикуется.
+Для обновления измените `build.tag` в deployer. Пуш в `plugins` сам по себе не обновляет закреплённую версию на стенде.
 
-Одна реплика обязательна для этой версии: состав звонков хранится в памяти. Перезапуск плагина очищает его состояние и не перезапускает LiveKit. Развёртывание меняет приложение attendance и конфигурацию nginx; пересобирать Meet для публикации URL не нужно.
+Одна реплика обязательна: состояние звонков хранится в памяти и теряется при перезапуске attendance. LiveKit при этом не перезапускается.
 
-## Публикация
+## Ограничения перед выкладкой
 
-1. Закоммитьте изменения attendance, nginx, README и этой инструкции в `deployer`.
-2. Доставьте коммит в `dev` и отправьте ветку на origin. Composer соберёт образ из версии `build.tag` и запустит stage.
-3. Проверьте stage с cookie окружения, как описано в README.
-4. Перенесите тот же коммит в `main` и отправьте ветку на origin. Composer запустит prod.
+Текущий prod streamapi включает проверку прав через Plugin Manager. Закреплённый attendance отправляет `call_id`, типы событий и `x-call-id`, но не передаёт контекст конкретной активации. Исходников SHA развёрнутого streamapi в локальном репозитории нет; совместимость с его проверкой прав не подтверждена. Перед слиянием проверьте реальную подписку на звонок. `UP` у health и HTTP 200 у `/api/info` подтверждают запуск процесса, но не доступ к событиям. При `UNAUTHENTICATED` или `PERMISSION_DENIED` нужна доработка интеграции в `plugins`, а затем обновление закреплённой версии. Не отключайте проверку прав streamapi для этого.
 
-Если в `dev` есть другие изменения, переносите в `main` только коммит посещаемости. `vars/stage.yaml` задаёт настройки окружения и сам по себе не включает stage в prod.
+Конфигурация публикует прямой URL плагина. В `MEET_PLUGINS` остаётся прежний внешний URL; автоматическое появление рабочего окна посещаемости в Meet этим деплоем не обеспечивается. Каталог и активацию через платформу нужно проверять отдельно.
 
-Автодеплой запускается изменениями в **deployer**. Пуш в репозиторий `plugins` запускает его CI, но не обновляет уже закреплённый `build.tag`. Для новой версии замените SHA в `apps/calls/attendance/vars/base.yaml`, проверьте в `dev` и затем перенесите в `main`.
+Result Gateway этим деплоем не запускается. По умолчанию плагин обращается к `localhost:8089` внутри своего контейнера, поэтому публикация сводки не работает. Для доступного Result Gateway задайте `ATTENDANCE_RESULT_GATEWAY_URL` и `ATTENDANCE_RESULT_GATEWAY_CALLBACK_URL` в `app.env`.
 
 ## Проверка prod
 
-После завершения автодеплоя выполните на сервере или другой машине с доступом к домену:
+С машины с доступом к стенду выполните без stage-cookie (в PowerShell используйте `curl.exe`):
 
 ```sh
 curl -fsS https://calls.vareonix.cc/apps/plugin-attendance/actuator/health
@@ -36,34 +30,41 @@ curl -fsS https://calls.vareonix.cc/apps/plugin-attendance/api/info
 curl -fsSI https://calls.vareonix.cc/apps/plugin-attendance/
 ```
 
-Ожидается: health `UP`, в info `source: streamapi` и `target` с `nginx:19090`, у страницы HTTP 200. Не передавайте stage-cookie при проверке prod. Первый reconcile может временно отдавать 502 до запуска нового сервиса.
+Ожидается health `UP`, в info `source: streamapi`, target с `nginx:19090`, у страницы HTTP 200. Во время сборки и запуска возможен временный 502. Отсутствие маршрута обычно даёт 404.
 
-Для stage добавьте к запросам `-H 'Cookie: composer_stage=<secret>:stage'`. В info должен быть target `nginx-stage:19090`, в HTTP-ответе — `X-Composer-Environment: stage`. Секрет берётся из существующего окружения; не добавляйте его в Git.
-
-Создайте звонок в том же окружении и откройте:
+Создайте звонок в том же окружении и откройте плагин до входа проверяемого участника:
 
 ```text
 https://calls.vareonix.cc/apps/plugin-attendance/?callId=RM_…
 ```
 
-`callId` — SID комнаты LiveKit, а не её имя. Откройте плагин до входа проверяемого участника: события, произошедшие до подписки, не воспроизводятся. При входе и выходе участника список должен обновиться.
-
-Для диагностики найдите контейнер нужного окружения и проверьте его журнал:
+`callId` — SID комнаты LiveKit, а не имя комнаты. События до подписки не воспроизводятся. Вход и выход участника должны обновить список. Для диагностики можно несколько раз запросить состояние подписки:
 
 ```sh
-docker ps --filter label=com.docker.compose.service=attendance
-docker ps --filter label=com.docker.compose.service=attendance-stage
+curl -fsS https://calls.vareonix.cc/apps/plugin-attendance/api/calls/RM_REPLACE_WITH_ROOM_SID/participants
+```
+
+Проверяйте `status`, `statusMessage`, `trackingSince` и изменения `present`/`left`; ошибки прав нельзя считать успешной проверкой даже при HTTP 200.
+
+На сервере:
+
+```sh
+docker ps -a --filter label=com.docker.compose.service=attendance
 docker logs --tail 100 <container>
 ```
 
-## Подключение к Meet и сводки
+## Stage
 
-Этот деплой публикует страницу и API плагина. Текущий `vareonix/main` Meet использует mock-каталог и не читает `MEET_PLUGINS`; автоматического появления кнопки посещаемости от этих изменений не будет. Интеграция каталога/окна выполняется отдельно. Ранее используемый внешний туннель плагину для доступа по новому URL больше не нужен.
+Attendance на stage отключён через `compose.x-gitsail.enabled: false` в `apps/calls/attendance/vars/stage.yaml`, как и остальные stage-сервисы в текущем main. Для проверки до prod нужно отдельно включить attendance и необходимые ему nginx, streamapi, Plugin Manager, Plugin Registry, OpenVidu, Meet на stage в отслеживаемой ветке `dev`. Не переносите включение stage в prod PR без необходимости.
 
-Настоящий Result Gateway пока не реализован. Этот деплой не запускает WireMock: учёт посещаемости работает, но кнопка публикации сводки возвращает `FAILED`, пока не настроен доступный Result Gateway. Позже его URL и callback можно задать через `ATTENDANCE_RESULT_GATEWAY_URL` и `ATTENDANCE_RESULT_GATEWAY_CALLBACK_URL` в `app.env`.
+Stage использует `attendance-stage:8081` и `nginx-stage:19090`. После включения окружения добавляйте к HTTP-запросам:
+
+```sh
+curl -i -H 'Cookie: gitsail_stage=<secret>:stage' https://calls.vareonix.cc/apps/plugin-attendance/api/info
+```
+
+Секрет — расшифрованное значение `app.stage_token` из `apps/ingress/nginx/vars/base.yaml`. Не сохраняйте его в Git. Проверяйте target `nginx-stage:19090` и заголовок окружения: в текущем main это `X-GitSail-Environment`, в старой dev-конфигурации — `X-Composer-Environment`. С неверным cookie можно попасть в prod. Сам backend stage подключается к внутреннему nginx без TLS и без cookie.
 
 ## Откат
 
-Сделайте `git revert <attendance-deployment-commit>` в нужной отслеживаемой ветке и отправьте её на origin. Composer уберёт новый сервис и маршрут. Для отката только версии поменяйте `build.tag` на предыдущий SHA и отправьте коммит. Другие сервисы приложения звонков не откатывайте.
-
-Механизм сборки и обновления описан в [документации Composer](https://github.com/dmironenko/composer/blob/master/docs/builds.md).
+Для отката версии верните предыдущий `build.tag`. Для полного удаления attendance нужно одновременно убрать сервис, upstream и маршрут nginx: оставшийся маршрут будет давать ошибки. Откат выполняется в отслеживаемой ветке соответствующего окружения.

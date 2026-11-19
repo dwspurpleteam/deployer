@@ -30,6 +30,15 @@ users_accounts:
     sudo: true
     sudo_nopasswd: true
 
+  - name: aslugin
+    fullname: Alexander Slugin
+    groups:
+      - docker
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMGLZGRpC8LOGaiKaWIaGfurUFtiE34lOBsVFJj3kijS alexander@RedmiBook-Alex
+    sudo: true
+    sudo_nopasswd: true
+
 users_groups:
   - name: docker
 
