@@ -30,7 +30,7 @@ Workflow `images.yml` в deployer создаёт PR с обновлением `c
 1. Слейте изменения attendance в `plugins/main` и дождитесь публикации образа.
 2. Слейте созданный PR deployer с новым тегом образа. Существующие `ATTENDANCE_STREAMAPI_TARGET` и `ATTENDANCE_STREAMAPI_PLAINTEXT` позволяют новой сборке работать до переключения на профили.
 3. Примените изменение deployer, которое задаёт `SPRING_PROFILES_ACTIVE` и удаляет эти дублирующие переменные.
-4. Зарегистрируйте в Plugin Registry новую версию `1.0.1` по манифесту `plugin-attendance/manifests/manifest-v1.1_plugin-v1.0.1.json` из `plugins`.
+4. Зарегистрируйте в Plugin Registry новую версию `1.0.1` по манифесту `plugin-attendance/manifests/plugin-attendance-1.0.1-manifest-1.1.json` из `plugins`.
 
 В манифесте должны быть серверные адреса:
 
