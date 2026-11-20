@@ -31,7 +31,7 @@ app:
     MEET_AWS_REGION: us-east-1
     MEET_S3_WITH_PATH_STYLE_ACCESS: 'true'
     MEET_PLUGINS: '[{"id":"attendance","title":"Посещаемость","url":"https://decisively-relaxed-firebrat.cloudpub.ru/"}]'
-    MEET_PLUGIN_ACTIVATION_MOCK: 'true'
+    MEET_PLUGIN_MANAGER_URL: http://pluginmanager:8080
 
 compose:
   services:
