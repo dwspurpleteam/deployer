@@ -11,6 +11,9 @@ kernel_sysfs:
   /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none: 0
 
 firewall_rules:
+  - port: '2222'
+    proto: tcp
+
   - port: '7881'
     proto: tcp
   - port: '3478'
