@@ -60,7 +60,7 @@ flowchart LR
   browser[Client] -->|интерфейс и api плагина / https| attendance_nginx
   subgraph calls_plugins["Calls (prod)"]
     manager[Plugin Manager]
-    proxy[NGINX]
+    proxy[NGINX] -->|подписка на события / grpc| streamapi[Stream API]
   end
   subgraph attendance_prod["Attendance (prod)"]
     attendance_nginx[NGINX] -->|интерфейс и api плагина| attendance[Attendance]
