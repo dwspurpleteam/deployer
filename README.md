@@ -11,13 +11,13 @@
 
 ```mermaid
 flowchart LR
-  browser[Client] -->|интерфейс и api звонков / HTTPS| proxy
-  browser <-->|аудио и видео / WebRTC, TURN| openvidu
+  browser[Client] -->|интерфейс и api звонков / https| proxy
+  browser <-->|аудио и видео / webrtc, turn| openvidu
 
   subgraph calls_prod["Calls (prod)"]
     proxy[NGINX] -->|интерфейс и api звонков| meet[OpenVidu Meet]
     proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
-    proxy -->|события и подписки / HTTP, gRPC| streamapi[Stream API]
+    proxy -->|события и подписки / http, grpc| streamapi[Stream API]
     proxy -->|активация и конфигурация плагинов| manager[Plugin Manager]
     proxy -->|каталог плагинов| registry[Plugin Registry]
     meet -->|управление звонками и участниками| openvidu
@@ -25,7 +25,7 @@ flowchart LR
     openvidu -->|события звонков / webhook| meet
     openvidu -->|события звонков / webhook| proxy
     streamapi <-->|получение медиа и управление звонком| openvidu
-    streamapi -->|проверка прав / gRPC| manager
+    streamapi -->|проверка прав / grpc| manager
     manager -->|манифесты плагинов| registry
   end
 
@@ -33,9 +33,9 @@ flowchart LR
     attendance_nginx[NGINX] -->|интерфейс и api плагина| attendance[Attendance]
   end
 
-  browser -->|интерфейс и api плагина / HTTPS| attendance_nginx
+  browser -->|интерфейс и api плагина / https| attendance_nginx
   manager -->|активация и проверка состояния| attendance_nginx
-  attendance -->|подписка на события / gRPC| proxy
+  attendance -->|подписка на события / grpc| proxy
 
   subgraph storage["Storage (prod)"]
     mongodb[MongoDB]
