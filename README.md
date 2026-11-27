@@ -11,39 +11,25 @@
 
 ```mermaid
 ---
-title: Звонки - интерфейс, медиа и события
+title: Звонки и плагины - подключение, управление и данные
 ---
 flowchart LR
-  browser[Client] -->|интерфейс и api звонков / https| proxy
+  browser[Client] -->|звонки, каталог и управление плагинами / https| proxy
   browser <-->|аудио и видео / webrtc, turn| openvidu
-
-  subgraph calls_prod["Calls (prod)"]
-    proxy[NGINX] -->|интерфейс и api звонков| meet[OpenVidu Meet]
-    proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
-    proxy -->|события и подписки / http, grpc| streamapi[Stream API]
-    meet -->|управление звонками и участниками| openvidu
-    openvidu -->|события звонков / webhook| meet
-    openvidu -->|события звонков / webhook| proxy
-    streamapi <-->|получение медиа и управление звонком| openvidu
-  end
-```
-
-```mermaid
----
-title: Плагины - активация, права, медиа и события
----
-flowchart LR
-  browser[Client] -->|каталог и управление плагинами / https| proxy
   browser -->|интерфейс и api плагина / https| attendance_nginx
 
-  subgraph calls_plugins["Calls (prod)"]
-    proxy[NGINX] -->|активация и конфигурация плагинов| manager[Plugin Manager]
-    proxy -->|подписки на события и медиа / grpc| streamapi
+  subgraph calls_prod["Calls (prod)"]
+    proxy[NGINX] -->|интерфейс звонка и управление плагинами| meet[OpenVidu Meet]
+    proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
+    proxy -->|webhook и подписки на события и медиа / http, grpc| streamapi[Stream API]
+    proxy -->|api активации и конфигурации| manager[Plugin Manager]
     proxy -->|каталог плагинов| registry[Plugin Registry]
-    proxy -->|управление плагинами| meet[OpenVidu Meet]
+    meet -->|управление звонками и участниками| openvidu
     meet -->|активация и остановка плагинов| manager
-    streamapi[Stream API] -->|проверка прав / grpc| manager
-    streamapi <-->|медиа / webrtc и команды| openvidu[OpenVidu LiveKit]
+    openvidu -->|события для meet / webhook| meet
+    openvidu -->|события для stream api / webhook| proxy
+    streamapi <-->|медиа / webrtc и управление звонком| openvidu
+    streamapi -->|проверка прав / grpc| manager
     manager -->|манифесты плагинов| registry
   end
 
@@ -57,7 +43,7 @@ flowchart LR
 
 ```mermaid
 ---
-title: Хранилища - данные сервисов и события
+title: Хранение и доставка данных - базы, кеш и события
 ---
 flowchart LR
   subgraph calls_storage["Calls (prod)"]
