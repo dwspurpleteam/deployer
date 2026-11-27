@@ -11,11 +11,10 @@
 
 ```mermaid
 flowchart LR
-  browser[Client] -->|HTTPS| ingress[NGINX ingress]
+  browser[Client] -->|HTTPS| proxy
   browser <-->|WebRTC / TURN| openvidu
-  plugin_backend[Plugin backend] <-->|gRPC / TLS| ingress
+  plugin_backend[Plugin backend] <-->|gRPC / TLS| proxy
   attendance[Attendance]
-  ingress -->|HTTP / gRPC| proxy
 
   subgraph calls_prod["Calls (prod)"]
     proxy[NGINX] --> meet[OpenVidu Meet]
@@ -30,7 +29,7 @@ flowchart LR
     streamapi <-->|media / control| openvidu
     streamapi -->|gRPC permissions| manager
     manager --> registry
-    manager -->|activation / health| ingress
+    manager -->|activation / health| proxy
   end
 
   proxy --> attendance
