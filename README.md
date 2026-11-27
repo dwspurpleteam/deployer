@@ -11,7 +11,7 @@
 
 ```mermaid
 ---
-title: Звонки — интерфейс, медиа и события
+title: Звонки - интерфейс, медиа и события
 ---
 flowchart LR
   browser[Client] -->|интерфейс и api звонков / https| proxy
@@ -30,7 +30,7 @@ flowchart LR
 
 ```mermaid
 ---
-title: Плагины — активация, права, медиа и события
+title: Плагины - активация, права, медиа и события
 ---
 flowchart LR
   browser[Client] -->|каталог и управление плагинами / https| proxy
@@ -57,7 +57,7 @@ flowchart LR
 
 ```mermaid
 ---
-title: Хранилища — данные сервисов и события
+title: Хранилища - данные сервисов и события
 ---
 flowchart LR
   subgraph calls_storage["Calls (prod)"]
