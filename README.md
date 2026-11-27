@@ -30,7 +30,7 @@ flowchart LR
 
 ```mermaid
 ---
-title: Плагины — активация, права и события
+title: Плагины — активация, права, медиа и события
 ---
 flowchart LR
   browser[Client] -->|каталог и управление плагинами / https| proxy
@@ -38,11 +38,12 @@ flowchart LR
 
   subgraph calls_plugins["Calls (prod)"]
     proxy[NGINX] -->|активация и конфигурация плагинов| manager[Plugin Manager]
-    proxy -->|подписка на события / grpc| streamapi
+    proxy -->|подписки на события и медиа / grpc| streamapi
     proxy -->|каталог плагинов| registry[Plugin Registry]
     proxy -->|управление плагинами| meet[OpenVidu Meet]
     meet -->|активация и остановка плагинов| manager
     streamapi[Stream API] -->|проверка прав / grpc| manager
+    streamapi <-->|медиа / webrtc и команды| openvidu[OpenVidu LiveKit]
     manager -->|манифесты плагинов| registry
   end
 
