@@ -13,7 +13,6 @@
 flowchart LR
   browser[Client] -->|HTTPS| proxy
   browser <-->|WebRTC / TURN| openvidu
-  plugin_backend[Plugin backend] <-->|gRPC / TLS| proxy
 
   subgraph calls_prod["Calls (prod)"]
     proxy[NGINX] --> meet[OpenVidu Meet]
