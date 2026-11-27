@@ -10,63 +10,80 @@
 ## Архитектура
 
 ```mermaid
+---
+title: Звонки - интерфейс, медиа и события
+---
 flowchart LR
-  browser[Client] -->|HTTPS| ingress[NGINX]
-  ingress -->|default| proxy
-  ingress -->|stage cookie| stage
-  browser <-->|WebRTC / TURN| openvidu
-  browser <-->|WebRTC / TURN| stage_openvidu
-  plugin_backend[Plugin backend] <-->|grpc / TLS| ingress
-  ingress <-->|grpc, default| proxy
-  ingress <-->|grpc, stage cookie| stage
-
-  subgraph calls_stage["Calls (stage)"]
-    stage[NGINX] --> stage_meet[OpenVidu Meet]
-    stage --> stage_openvidu[OpenVidu LiveKit]
-    stage_meet --> stage_openvidu
-    stage_openvidu -->|webhooks, s2s| stage
-    stage -->|webhooks / grpc| stage_streamapi[streamapi]
-    stage --> stage_manager[Plugin Manager]
-    stage --> stage_registry[Plugin Registry]
-    stage_manager --> stage_registry
-    stage_openvidu -->|media| stage_streamapi
-  end
+  browser[Client] -->|интерфейс и api звонков / https| proxy
+  browser <-->|аудио и видео / webrtc, turn| openvidu
 
   subgraph calls_prod["Calls (prod)"]
-    proxy["NGINX"] --> meet[OpenVidu Meet]
-    proxy --> openvidu[OpenVidu LiveKit]
-    meet --> openvidu
-    openvidu -->|webhooks, s2s| proxy
-    proxy -->|webhooks / grpc| streamapi[streamapi]
-    proxy --> manager[Plugin Manager]
-    proxy --> registry[Plugin Registry]
-    manager --> registry
-    openvidu -->|media| streamapi
+    proxy[NGINX] -->|интерфейс и api звонков| meet[OpenVidu Meet]
+    proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
+    proxy -->|события и подписки / http, grpc| streamapi[Stream API]
+    meet -->|управление звонками и участниками| openvidu
+    openvidu -->|события звонков / webhook| meet
+    openvidu -->|события звонков / webhook| proxy
+    streamapi <-->|получение медиа и управление звонком| openvidu
+  end
+```
+
+```mermaid
+---
+title: Плагины - активация, права, медиа и события
+---
+flowchart LR
+  browser[Client] -->|каталог и управление плагинами / https| proxy
+  browser -->|интерфейс и api плагина / https| attendance_nginx
+
+  subgraph calls_plugins["Calls (prod)"]
+    proxy[NGINX] -->|активация и конфигурация плагинов| manager[Plugin Manager]
+    proxy -->|подписки на события и медиа / grpc| streamapi
+    proxy -->|каталог плагинов| registry[Plugin Registry]
+    proxy -->|управление плагинами| meet[OpenVidu Meet]
+    meet -->|активация и остановка плагинов| manager
+    streamapi[Stream API] -->|проверка прав / grpc| manager
+    streamapi <-->|медиа / webrtc и команды| openvidu[OpenVidu LiveKit]
+    manager -->|манифесты плагинов| registry
+  end
+
+  subgraph attendance_prod["Attendance (prod)"]
+    attendance_nginx[NGINX] -->|интерфейс и api плагина| attendance[Attendance]
+  end
+
+  manager -->|активация, остановка и проверка состояния| attendance_nginx
+  attendance -->|подписка на события / grpc| proxy
+```
+
+```mermaid
+---
+title: Хранилища - данные сервисов и события
+---
+flowchart LR
+  subgraph calls_storage["Calls (prod)"]
+    meet[OpenVidu Meet]
+    openvidu[OpenVidu LiveKit]
+    manager[Plugin Manager]
+    registry[Plugin Registry]
+    streamapi[Stream API]
   end
 
   subgraph storage["Storage (prod)"]
     mongodb[MongoDB]
-    redis[Redis]
     minio[MinIO]
-    nats["NATS JetStream"]
+    redis[Redis]
     postgres[PostgreSQL]
+    nats["NATS JetStream"]
   end
 
-  meet --> mongodb
-  meet --> redis
-  meet --> minio
-  stage_meet --> mongodb
-  stage_meet --> redis
-  stage_meet --> minio
-  openvidu --> redis
-  manager --> redis
-  stage_manager --> redis
-  streamapi <-->|events| nats
-  stage_streamapi <-->|events| nats
-  registry --> postgres
-  stage_registry --> postgres
-  manager --> postgres
-  stage_manager --> postgres
+  meet -->|комнаты и пользователи| mongodb
+  meet -->|файлы| minio
+  meet -->|состояние и блокировки| redis
+  openvidu -->|состояние звонков| redis
+  manager -->|кеш манифестов| redis
+  manager -->|активации и права| postgres
+  registry -->|данные каталога| postgres
+  streamapi <-->|хранение и доставка событий| nats
 ```
 
 Разработчики плагинов подключаются к grpc по TLS через `calls.vareonix.cc:443`; ingress проксирует подписки на медиа и события в nginx выбранного окружения. Webhooks для streamapi и служебные HTTP-ручки доступны только внутри инфраструктуры. Подписки одного звонка направляются по `x-call-id` на одну реплику. После обрыва grpc stream клиент подписывается заново
