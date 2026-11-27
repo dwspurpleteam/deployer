@@ -11,39 +11,25 @@
 
 ```mermaid
 ---
-title: Проведение звонка - подключение, медиа и события
+title: Звонки и плагины - подключение, управление и данные
 ---
 flowchart LR
-  browser[Client] -->|подключение к звонку / https| proxy
+  browser[Client] -->|звонки, каталог и управление плагинами / https| proxy
   browser <-->|аудио и видео / webrtc, turn| openvidu
-
-  subgraph calls_prod["Calls (prod)"]
-    proxy[NGINX] -->|интерфейс и api звонков| meet[OpenVidu Meet]
-    proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
-    proxy -->|доставка событий и подписки / http, grpc| streamapi[Stream API]
-    meet -->|управление звонками и участниками| openvidu
-    openvidu -->|события для meet / webhook| meet
-    openvidu -->|события для stream api / webhook| proxy
-    streamapi <-->|получение медиа и управление звонком| openvidu
-  end
-```
-
-```mermaid
----
-title: Работа плагинов - активация, события и медиа
----
-flowchart LR
-  browser[Client] -->|каталог, активация и остановка плагинов / https| proxy
   browser -->|интерфейс и api плагина / https| attendance_nginx
 
-  subgraph calls_plugins["Calls (prod)"]
-    proxy[NGINX] -->|api активации и конфигурации| manager[Plugin Manager]
-    proxy -->|подписки на события и медиа / grpc| streamapi
+  subgraph calls_prod["Calls (prod)"]
+    proxy[NGINX] -->|интерфейс звонка и управление плагинами| meet[OpenVidu Meet]
+    proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
+    proxy -->|webhook и подписки на события и медиа / http, grpc| streamapi[Stream API]
+    proxy -->|api активации и конфигурации| manager[Plugin Manager]
     proxy -->|каталог плагинов| registry[Plugin Registry]
-    proxy -->|запросы на активацию и остановку| meet[OpenVidu Meet]
+    meet -->|управление звонками и участниками| openvidu
     meet -->|активация и остановка плагинов| manager
-    streamapi[Stream API] -->|проверка прав / grpc| manager
-    streamapi <-->|медиа / webrtc и команды| openvidu[OpenVidu LiveKit]
+    openvidu -->|события для meet / webhook| meet
+    openvidu -->|события для stream api / webhook| proxy
+    streamapi <-->|медиа / webrtc и управление звонком| openvidu
+    streamapi -->|проверка прав / grpc| manager
     manager -->|манифесты плагинов| registry
   end
 
