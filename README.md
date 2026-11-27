@@ -14,6 +14,7 @@ flowchart LR
   browser[Client] -->|HTTPS| ingress[NGINX ingress]
   browser <-->|WebRTC / TURN| openvidu
   plugin_backend[Plugin backend] <-->|gRPC / TLS| ingress
+  attendance[Attendance]
   ingress -->|HTTP / gRPC| proxy
 
   subgraph calls_prod["Calls (prod)"]
@@ -22,8 +23,6 @@ flowchart LR
     proxy -->|HTTP / gRPC| streamapi[streamapi]
     proxy --> manager[Plugin Manager]
     proxy --> registry[Plugin Registry]
-    proxy --> registry_ui["Plugin Registry UI (static)"]
-    proxy --> attendance["Attendance (frontend + backend)"]
     meet --> openvidu
     meet --> manager
     openvidu -->|webhooks| meet
@@ -32,8 +31,10 @@ flowchart LR
     streamapi -->|gRPC permissions| manager
     manager --> registry
     manager -->|activation / health| ingress
-    attendance -->|gRPC events| proxy
   end
+
+  proxy --> attendance
+  attendance -->|gRPC events| proxy
 
   subgraph storage["Storage (prod)"]
     mongodb[MongoDB]
