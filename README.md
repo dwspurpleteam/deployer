@@ -11,36 +11,36 @@
 
 ```mermaid
 ---
-title: Звонки - интерфейс, медиа и события
+title: Проведение звонка - подключение, медиа и события
 ---
 flowchart LR
-  browser[Client] -->|интерфейс и api звонков / https| proxy
+  browser[Client] -->|подключение к звонку / https| proxy
   browser <-->|аудио и видео / webrtc, turn| openvidu
 
   subgraph calls_prod["Calls (prod)"]
     proxy[NGINX] -->|интерфейс и api звонков| meet[OpenVidu Meet]
     proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
-    proxy -->|события и подписки / http, grpc| streamapi[Stream API]
+    proxy -->|доставка событий и подписки / http, grpc| streamapi[Stream API]
     meet -->|управление звонками и участниками| openvidu
-    openvidu -->|события звонков / webhook| meet
-    openvidu -->|события звонков / webhook| proxy
+    openvidu -->|события для meet / webhook| meet
+    openvidu -->|события для stream api / webhook| proxy
     streamapi <-->|получение медиа и управление звонком| openvidu
   end
 ```
 
 ```mermaid
 ---
-title: Плагины - активация, права, медиа и события
+title: Работа плагинов - активация, события и медиа
 ---
 flowchart LR
-  browser[Client] -->|каталог и управление плагинами / https| proxy
+  browser[Client] -->|каталог, активация и остановка плагинов / https| proxy
   browser -->|интерфейс и api плагина / https| attendance_nginx
 
   subgraph calls_plugins["Calls (prod)"]
-    proxy[NGINX] -->|активация и конфигурация плагинов| manager[Plugin Manager]
+    proxy[NGINX] -->|api активации и конфигурации| manager[Plugin Manager]
     proxy -->|подписки на события и медиа / grpc| streamapi
     proxy -->|каталог плагинов| registry[Plugin Registry]
-    proxy -->|управление плагинами| meet[OpenVidu Meet]
+    proxy -->|запросы на активацию и остановку| meet[OpenVidu Meet]
     meet -->|активация и остановка плагинов| manager
     streamapi[Stream API] -->|проверка прав / grpc| manager
     streamapi <-->|медиа / webrtc и команды| openvidu[OpenVidu LiveKit]
@@ -57,7 +57,7 @@ flowchart LR
 
 ```mermaid
 ---
-title: Хранилища - данные сервисов и события
+title: Хранение и доставка данных - базы, кеш и события
 ---
 flowchart LR
   subgraph calls_storage["Calls (prod)"]
