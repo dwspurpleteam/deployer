@@ -17,7 +17,7 @@ flowchart LR
   subgraph calls_prod["Calls (prod)"]
     proxy[NGINX] --> meet[OpenVidu Meet]
     proxy --> openvidu[OpenVidu LiveKit]
-    proxy -->|HTTP / gRPC| streamapi[streamapi]
+    proxy -->|HTTP / gRPC| streamapi[Stream API]
     proxy --> manager[Plugin Manager]
     proxy --> registry[Plugin Registry]
     meet --> openvidu
