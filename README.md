@@ -11,37 +11,28 @@
 
 ```mermaid
 flowchart LR
-  browser[Client] -->|HTTPS| ingress[NGINX]
-  ingress -->|default| proxy
-  ingress -->|stage cookie| stage
+  browser[Client] -->|HTTPS| ingress[NGINX ingress]
   browser <-->|WebRTC / TURN| openvidu
-  browser <-->|WebRTC / TURN| stage_openvidu
-  plugin_backend[Plugin backend] <-->|grpc / TLS| ingress
-  ingress <-->|grpc, default| proxy
-  ingress <-->|grpc, stage cookie| stage
-
-  subgraph calls_stage["Calls (stage)"]
-    stage[NGINX] --> stage_meet[OpenVidu Meet]
-    stage --> stage_openvidu[OpenVidu LiveKit]
-    stage_meet --> stage_openvidu
-    stage_openvidu -->|webhooks, s2s| stage
-    stage -->|webhooks / grpc| stage_streamapi[streamapi]
-    stage --> stage_manager[Plugin Manager]
-    stage --> stage_registry[Plugin Registry]
-    stage_manager --> stage_registry
-    stage_openvidu -->|media| stage_streamapi
-  end
+  plugin_backend[Plugin backend] <-->|gRPC / TLS| ingress
+  ingress -->|HTTP / gRPC| proxy
 
   subgraph calls_prod["Calls (prod)"]
-    proxy["NGINX"] --> meet[OpenVidu Meet]
+    proxy[NGINX] --> meet[OpenVidu Meet]
     proxy --> openvidu[OpenVidu LiveKit]
-    meet --> openvidu
-    openvidu -->|webhooks, s2s| proxy
-    proxy -->|webhooks / grpc| streamapi[streamapi]
+    proxy -->|HTTP / gRPC| streamapi[streamapi]
     proxy --> manager[Plugin Manager]
     proxy --> registry[Plugin Registry]
+    proxy --> registry_ui["Plugin Registry UI (static)"]
+    proxy --> attendance["Attendance (frontend + backend)"]
+    meet --> openvidu
+    meet --> manager
+    openvidu -->|webhooks| meet
+    openvidu -->|webhooks| proxy
+    streamapi <-->|media / control| openvidu
+    streamapi -->|gRPC permissions| manager
     manager --> registry
-    openvidu -->|media| streamapi
+    manager -->|activation / health| ingress
+    attendance -->|gRPC events| proxy
   end
 
   subgraph storage["Storage (prod)"]
@@ -55,18 +46,11 @@ flowchart LR
   meet --> mongodb
   meet --> redis
   meet --> minio
-  stage_meet --> mongodb
-  stage_meet --> redis
-  stage_meet --> minio
   openvidu --> redis
   manager --> redis
-  stage_manager --> redis
   streamapi <-->|events| nats
-  stage_streamapi <-->|events| nats
   registry --> postgres
-  stage_registry --> postgres
   manager --> postgres
-  stage_manager --> postgres
 ```
 
 Разработчики плагинов подключаются к grpc по TLS через `calls.vareonix.cc:443`; ingress проксирует подписки на медиа и события в nginx выбранного окружения. Webhooks для streamapi и служебные HTTP-ручки доступны только внутри инфраструктуры. Подписки одного звонка направляются по `x-call-id` на одну реплику. После обрыва grpc stream клиент подписывается заново
