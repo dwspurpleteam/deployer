@@ -6,7 +6,7 @@ app:
 compose:
   services:
     attendance:
-      image: ghcr.io/dwspurpleteam/attendance:4cf4f8f263c75dc812815afbca4e36a950ba5ca5
+      image: ghcr.io/dwspurpleteam/attendance:7aa7b2f2f69c6bc0827220e8abca1693a460a2c0
       env_file:
       - ./configs/service.env
       mem_limit: 384m
