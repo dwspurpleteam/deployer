@@ -18,14 +18,22 @@ flowchart LR
     proxy[NGINX] -->|интерфейс и api звонков| meet[OpenVidu Meet]
     proxy -->|сигнализация звонков| openvidu[OpenVidu LiveKit]
     proxy -->|события и подписки / http, grpc| streamapi[Stream API]
-    proxy -->|активация и конфигурация плагинов| manager[Plugin Manager]
-    proxy -->|каталог плагинов| registry[Plugin Registry]
     meet -->|управление звонками и участниками| openvidu
-    meet -->|активация плагинов| manager
     openvidu -->|события звонков / webhook| meet
     openvidu -->|события звонков / webhook| proxy
     streamapi <-->|получение медиа и управление звонком| openvidu
-    streamapi -->|проверка прав / grpc| manager
+  end
+```
+
+```mermaid
+flowchart LR
+  browser[Client] -->|интерфейс и api плагина / https| attendance_nginx
+
+  subgraph calls_plugins["Calls (prod)"]
+    proxy[NGINX] -->|активация и конфигурация плагинов| manager[Plugin Manager]
+    proxy -->|каталог плагинов| registry[Plugin Registry]
+    meet[OpenVidu Meet] -->|активация плагинов| manager
+    streamapi[Stream API] -->|проверка прав / grpc| manager
     manager -->|манифесты плагинов| registry
   end
 
@@ -33,9 +41,19 @@ flowchart LR
     attendance_nginx[NGINX] -->|интерфейс и api плагина| attendance[Attendance]
   end
 
-  browser -->|интерфейс и api плагина / https| attendance_nginx
   manager -->|активация и проверка состояния| attendance_nginx
   attendance -->|подписка на события / grpc| proxy
+```
+
+```mermaid
+flowchart LR
+  subgraph calls_storage["Calls (prod)"]
+    meet[OpenVidu Meet]
+    openvidu[OpenVidu LiveKit]
+    manager[Plugin Manager]
+    streamapi[Stream API]
+    registry[Plugin Registry]
+  end
 
   subgraph storage["Storage (prod)"]
     mongodb[MongoDB]
